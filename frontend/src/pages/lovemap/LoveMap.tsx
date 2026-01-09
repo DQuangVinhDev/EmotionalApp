@@ -92,7 +92,7 @@ export default function LoveMap() {
                     <div className="relative">
                         <textarea
                             placeholder="Hãy chia sẻ thật tâm nhất..."
-                            className="textarea w-full h-56 p-8 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[3rem] focus:ring-4 focus:ring-rose-500/10 focus:bg-white outline-none transition-all text-lg font-bold text-gray-700 resize-none shadow-inner"
+                            className="textarea w-full h-56 p-8 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[3rem] focus:ring-4 focus:ring-rose-500/10 focus:bg-white outline-none transition-all text-lg font-bold text-gray-900 resize-none shadow-inner"
                             value={answer}
                             onChange={(e) => setAnswer(e.target.value)}
                         />

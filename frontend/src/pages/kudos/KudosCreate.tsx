@@ -76,7 +76,7 @@ export default function KudosCreate() {
                     </div>
                     <textarea
                         placeholder="Hôm nay mình thực sự trân trọng khi bạn..."
-                        className="textarea w-full h-56 p-8 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[3rem] focus:ring-4 focus:ring-amber-500/10 focus:bg-white outline-none transition-all text-lg font-bold italic text-gray-700 resize-none shadow-inner"
+                        className="textarea w-full h-56 p-8 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[3rem] focus:ring-4 focus:ring-amber-500/10 focus:bg-white outline-none transition-all text-lg font-bold italic text-gray-900 resize-none shadow-inner"
                         value={text}
                         onChange={(e) => setText(e.target.value)}
                     />

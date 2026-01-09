@@ -59,7 +59,7 @@ export default function Login() {
                         <input
                             type="email"
                             placeholder="Email của bạn"
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all font-medium"
+                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all font-medium text-gray-900"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -72,7 +72,7 @@ export default function Login() {
                         <input
                             type="password"
                             placeholder="Mật khẩu"
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all font-medium"
+                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all font-medium text-gray-900"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required

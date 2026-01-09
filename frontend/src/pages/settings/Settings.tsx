@@ -163,7 +163,7 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Họ và tên</label>
                             <input
                                 type="text"
-                                className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold"
+                                className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold text-gray-900"
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                             />
@@ -175,7 +175,7 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Giờ nhắc Check-in</label>
                             <input
                                 type="time"
-                                className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold"
+                                className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold text-gray-900"
                                 value={formData.reminderTime}
                                 onChange={e => setFormData({ ...formData, reminderTime: e.target.value })}
                             />

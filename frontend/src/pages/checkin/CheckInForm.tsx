@@ -118,7 +118,7 @@ export default function CheckInForm() {
                     <div className="relative">
                         <textarea
                             placeholder="Hôm nay mình trân trọng vì..."
-                            className="textarea textarea-bordered w-full h-40 p-6 rounded-[2.5rem] bg-gray-50 border-none ring-1 ring-gray-100 focus:ring-2 focus:ring-rose-500/20 transition-all font-medium resize-none text-base"
+                            className="textarea textarea-bordered w-full h-40 p-6 rounded-[2.5rem] bg-gray-50 border-none ring-1 ring-gray-100 focus:ring-2 focus:ring-rose-500/20 transition-all font-medium resize-none text-base text-gray-900"
                             value={gratitude}
                             onChange={(e) => setGratitude(e.target.value)}
                         />

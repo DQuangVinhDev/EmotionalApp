@@ -54,7 +54,7 @@ export default function Register() {
                         <input
                             type="text"
                             placeholder="Tên của bạn"
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium"
+                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-gray-900"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -67,7 +67,7 @@ export default function Register() {
                         <input
                             type="email"
                             placeholder="Email của bạn"
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium"
+                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-gray-900"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -80,7 +80,7 @@ export default function Register() {
                         <input
                             type="password"
                             placeholder="Mật khẩu"
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium"
+                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-gray-900"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required

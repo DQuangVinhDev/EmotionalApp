@@ -101,7 +101,7 @@ export default function RepairDraft() {
                                 <div className="flex items-center gap-2 mb-2 ml-2"><div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-ping" /><h2 className="text-sm font-black text-gray-400 uppercase tracking-widest">Quan sát sự việc</h2></div>
                                 <textarea
                                     placeholder="Ví dụ: Khi mình thấy bạn chưa cất đồ sau khi đi làm về..."
-                                    className="textarea w-full h-40 p-6 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[2.5rem] focus:ring-4 focus:ring-indigo-500/10 focus:bg-white outline-none transition-all font-bold text-gray-700 italic"
+                                    className="textarea w-full h-40 p-6 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[2.5rem] focus:ring-4 focus:ring-indigo-500/10 focus:bg-white outline-none transition-all font-bold text-gray-900 italic"
                                     value={observation}
                                     onChange={e => setObservation(e.target.value)}
                                 />
@@ -145,7 +145,7 @@ export default function RepairDraft() {
                                 <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest ml-2">Lời đề nghị cụ thể</h2>
                                 <textarea
                                     placeholder="Bạn có thể giúp mình... không?"
-                                    className="textarea w-full h-40 p-6 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[2.5rem] focus:ring-4 focus:ring-indigo-500/10 focus:bg-white outline-none transition-all font-bold text-gray-700"
+                                    className="textarea w-full h-40 p-6 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[2.5rem] focus:ring-4 focus:ring-indigo-500/10 focus:bg-white outline-none transition-all font-bold text-gray-900"
                                     value={request}
                                     onChange={e => setRequest(e.target.value)}
                                 />
