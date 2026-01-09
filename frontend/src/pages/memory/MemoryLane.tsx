@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import client from '../../api/client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Lock, Globe, Filter, Calendar, X } from 'lucide-react';
+import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Lock, Globe, Filter, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function MemoryLane() {
@@ -175,9 +175,9 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
                         <div className="flex items-center gap-2">
                             <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || 'Me'}</h3>
                             {isPrivate ? (
-                                <span className="p-1 bg-gray-100 rounded-md text-gray-400"><Lock size={12} title="Chỉ mình tôi" /></span>
+                                <span className="p-1 bg-gray-100 rounded-md text-gray-400" title="Chỉ mình tôi"><Lock size={12} /></span>
                             ) : (
-                                <span className="p-1 bg-rose-50 rounded-md text-rose-400"><Globe size={12} title="Chia sẻ chung" /></span>
+                                <span className="p-1 bg-rose-50 rounded-md text-rose-400" title="Chia sẻ chung"><Globe size={12} /></span>
                             )}
                         </div>
                         <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">

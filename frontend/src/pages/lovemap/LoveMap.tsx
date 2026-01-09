@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import client from '../../api/client';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Heart, ChevronLeft, Sparkles, Send, Quote, RefreshCw, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
@@ -45,7 +45,7 @@ export default function LoveMap() {
     };
 
     // Fetch Daily Prompt or Random Prompt
-    const { data: prompt, isLoading, refetch } = useQuery({
+    const { data: prompt, isLoading } = useQuery({
         queryKey: ['daily-prompt'],
         queryFn: async () => {
             const res = await client.get('/prompts/today');
