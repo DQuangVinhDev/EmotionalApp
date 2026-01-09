@@ -32,6 +32,9 @@
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "^4.22.4",
-        "@rollup/rollup-linux-x64-musl": "^4.22.4"
+        "@rollup/rollup-linux-x64-musl": "^4.22.4",
+        "lightningcss-linux-x64-gnu": "^1.27.0",
+        "lightningcss-linux-x64-musl": "^1.27.0",
+        "esbuild-linux-x64": "^0.21.0"
     }
 }
