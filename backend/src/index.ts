@@ -1,19 +1,19 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const authRoutes = require('./routes/auth').default || require('./routes/auth');
-const coupleRoutes = require('./routes/couple').default || require('./routes/couple');
-const checkinRoutes = require('./routes/checkin').default || require('./routes/checkin');
-const kudosRoutes = require('./routes/kudos').default || require('./routes/kudos');
-const promptRoutes = require('./routes/prompt').default || require('./routes/prompt');
-const repairRoutes = require('./routes/repair').default || require('./routes/repair');
-const weeklyRoutes = require('./routes/weekly').default || require('./routes/weekly');
-const backlogRoutes = require('./routes/backlog').default || require('./routes/backlog');
-const feedRoutes = require('./routes/feed').default || require('./routes/feed');
-const userRoutes = require('./routes/user').default || require('./routes/user');
-const { startCronJobs } = require('./services/cron');
-const { seedPrompts } = require('./services/seed');
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth';
+import coupleRoutes from './routes/couple';
+import checkinRoutes from './routes/checkin';
+import kudosRoutes from './routes/kudos';
+import promptRoutes from './routes/prompt';
+import repairRoutes from './routes/repair';
+import weeklyRoutes from './routes/weekly';
+import backlogRoutes from './routes/backlog';
+import feedRoutes from './routes/feed';
+import userRoutes from './routes/user';
+import { startCronJobs } from './services/cron';
+import { seedPrompts } from './services/seed';
 
 dotenv.config();
 
