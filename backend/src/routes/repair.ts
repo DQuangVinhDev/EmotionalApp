@@ -22,7 +22,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
         if (repair.visibility === VisibilityType.SHARED_NOW) {
             const user = await User.findById(userId);
             if (user && coupleId) {
-                await notifyPartner(
+                notifyPartner(
                     String(userId),
                     String(coupleId),
                     `${user.name} muốn kết nối để giải quyết mâu thuẫn`,
@@ -46,10 +46,10 @@ router.post('/:id/respond', authMiddleware, async (req: AuthRequest, res: Respon
 
         const user = await User.findById(req.user?.userId);
         if (user && repair.coupleId) {
-            await notifyPartner(
+            notifyPartner(
                 String(user._id),
                 String(repair.coupleId),
-                `${user.name} đã phản hồi thông điệp của bạn`,
+                `${user.name} đã phán hồi thông điệp của bạn`,
                 `${user.name} vừa gửi phản hồi trong Repair Loop. Hãy cùng nhau tìm tiếng nói chung nhé! ✨`
             );
         }

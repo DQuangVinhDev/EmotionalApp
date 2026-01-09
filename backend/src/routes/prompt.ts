@@ -49,7 +49,7 @@ router.post('/answer', authMiddleware, async (req: AuthRequest, res: Response) =
         if (answer.visibility === VisibilityType.SHARED_NOW) {
             const user = await User.findById(userId);
             if (user && coupleId) {
-                await notifyPartner(
+                notifyPartner(
                     String(userId),
                     String(coupleId),
                     `${user.name} vừa trả lời Love Map`,

@@ -35,7 +35,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
         const user = await User.findById(userId);
         const coupleId = item.coupleId;
         if (user && coupleId) {
-            await notifyPartner(
+            notifyPartner(
                 String(userId),
                 String(coupleId),
                 `${user.name} đã bình luận về bài viết của bạn`,

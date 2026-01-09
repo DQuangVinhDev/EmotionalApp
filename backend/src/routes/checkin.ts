@@ -25,7 +25,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
         if (checkIn.visibility === VisibilityType.SHARED_NOW) {
             const user = await User.findById(userId);
             if (user && coupleId) {
-                await notifyPartner(
+                notifyPartner(
                     String(userId),
                     String(coupleId),
                     `${user.name} vừa chia sẻ tâm trạng mới`,
@@ -61,7 +61,7 @@ router.post('/:id/shareNow', authMiddleware, async (req: AuthRequest, res: Respo
 
         const user = await User.findById(req.user?.userId);
         if (user && checkin.coupleId) {
-            await notifyPartner(
+            notifyPartner(
                 String(user._id),
                 String(checkin.coupleId),
                 `${user.name} vừa chia sẻ tâm trạng mới`,
