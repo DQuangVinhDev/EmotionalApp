@@ -15,10 +15,24 @@ router.get('/', authMiddleware, async (req: AuthRequest, res) => {
         if (!coupleId || !userId) return res.status(400).json({ message: 'Missing auth info' });
 
         const limit = parseInt(req.query.limit as string) || 50;
+        const type = req.query.type as string; // Optional: CHECKIN, KUDOS, etc.
+        const startDate = req.query.startDate as string;
+        const endDate = req.query.endDate as string;
+
+        const dateFilter: any = {};
+        if (startDate) dateFilter.$gte = new Date(startDate);
+        if (endDate) {
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            dateFilter.$lte = end;
+        }
+
+        const baseQuery: any = { coupleId };
+        if (startDate || endDate) baseQuery.createdAt = dateFilter;
 
         // Query: My items (private or shared) OR Partner's shared items
         const query = {
-            coupleId,
+            ...baseQuery,
             $or: [
                 { userId: userId }, // My items
                 { sharedAt: { $ne: null } } // Shared items (includes Partner's)
@@ -27,7 +41,7 @@ router.get('/', authMiddleware, async (req: AuthRequest, res) => {
 
         // Kudos is special because it has fromUserId
         const kudosQuery = {
-            coupleId,
+            ...baseQuery,
             $or: [
                 { fromUserId: userId }, // Sent by me
                 { toUserId: userId },   // Received by me (and thus shared/visible)
@@ -37,18 +51,23 @@ router.get('/', authMiddleware, async (req: AuthRequest, res) => {
 
         // Repair uses initiatorUserId
         const repairQuery = {
-            coupleId,
+            ...baseQuery,
             $or: [
                 { initiatorUserId: userId },
                 { sharedAt: { $ne: null } }
             ]
         };
 
+        const fetchCheckins = !type || type === 'CHECKIN';
+        const fetchKudos = !type || type === 'KUDOS';
+        const fetchAnswers = !type || type === 'PROMPT_ANSWER';
+        const fetchRepairs = !type || type === 'REPAIR';
+
         const [checkins, kudos, answers, repairs] = await Promise.all([
-            CheckIn.find(query).sort({ createdAt: -1 }).limit(limit).populate('userId', 'name').populate('comments.userId', 'name'),
-            Kudos.find(kudosQuery).sort({ createdAt: -1 }).limit(limit).populate('fromUserId', 'name').populate('toUserId', 'name').populate('comments.userId', 'name'),
-            PromptAnswer.find(query).sort({ createdAt: -1 }).limit(limit).populate('userId', 'name').populate('promptId').populate('comments.userId', 'name'),
-            Repair.find(repairQuery).sort({ createdAt: -1 }).limit(limit).populate('initiatorUserId', 'name').populate('comments.userId', 'name')
+            fetchCheckins ? CheckIn.find(query).sort({ createdAt: -1 }).limit(limit).populate('userId', 'name').populate('comments.userId', 'name') : [],
+            fetchKudos ? Kudos.find(kudosQuery).sort({ createdAt: -1 }).limit(limit).populate('fromUserId', 'name').populate('toUserId', 'name').populate('comments.userId', 'name') : [],
+            fetchAnswers ? PromptAnswer.find(query).sort({ createdAt: -1 }).limit(limit).populate('userId', 'name').populate('promptId').populate('comments.userId', 'name') : [],
+            fetchRepairs ? Repair.find(repairQuery).sort({ createdAt: -1 }).limit(limit).populate('initiatorUserId', 'name').populate('comments.userId', 'name') : []
         ]);
 
         // Map and tag

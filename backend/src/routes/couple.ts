@@ -10,17 +10,27 @@ const generatePairCode = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 };
 
+import jwt from 'jsonwebtoken';
+
+// ... (keep generatePairCode)
+
 router.post('/create', authMiddleware, async (req: AuthRequest, res) => {
     try {
         const userId = req.user?.userId;
         const existingCouple = await Couple.findOne({ memberIds: userId });
 
         if (existingCouple) {
-            // If the couple only has this member, we can just return the pairCode again
+            // Generate token even for existing couple to resolve "stuck" states
+            const accessToken = jwt.sign(
+                { userId: userId, coupleId: existingCouple._id },
+                process.env.JWT_SECRET || 'secret',
+                { expiresIn: '1d' }
+            );
+
             if (existingCouple.memberIds.length === 1) {
-                return res.json({ pairCode: existingCouple.pairCode });
+                return res.json({ pairCode: existingCouple.pairCode, accessToken, coupleId: existingCouple._id });
             }
-            return res.status(400).json({ message: 'Bạn đã ở trong một couple hoàn chỉnh' });
+            return res.status(400).json({ message: 'Bạn đã ở trong một couple hoàn chỉnh', accessToken, coupleId: existingCouple._id });
         }
 
         const pairCode = generatePairCode();
@@ -30,7 +40,13 @@ router.post('/create', authMiddleware, async (req: AuthRequest, res) => {
         });
         await couple.save();
 
-        res.json({ pairCode });
+        const accessToken = jwt.sign(
+            { userId: userId, coupleId: couple._id },
+            process.env.JWT_SECRET || 'secret',
+            { expiresIn: '1d' }
+        );
+
+        res.json({ pairCode, accessToken, coupleId: couple._id });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
@@ -42,16 +58,32 @@ router.post('/join', authMiddleware, async (req: AuthRequest, res) => {
         const { pairCode } = req.body;
 
         const existingCoupleUser = await Couple.findOne({ memberIds: userId });
-        if (existingCoupleUser) return res.status(400).json({ message: 'Bạn đã ở trong một couple' });
+        if (existingCoupleUser) {
+            const accessToken = jwt.sign(
+                { userId: userId, coupleId: existingCoupleUser._id },
+                process.env.JWT_SECRET || 'secret',
+                { expiresIn: '1d' }
+            );
+            return res.status(400).json({ message: 'Bạn đã ở trong một couple', accessToken, coupleId: existingCoupleUser._id });
+        }
 
         const couple = await Couple.findOne({ pairCode: pairCode.toUpperCase() });
         if (!couple) return res.status(404).json({ message: 'Mã không hợp lệ' });
         if (couple.memberIds.length >= 2) return res.status(400).json({ message: 'Couple này đã đầy' });
 
         couple.memberIds.push(userId as any);
+        if (couple.memberIds.length === 2) {
+            couple.pairedAt = new Date();
+        }
         await couple.save();
 
-        res.json({ message: 'Tham gia thành công', coupleId: couple._id });
+        const accessToken = jwt.sign(
+            { userId: userId, coupleId: couple._id },
+            process.env.JWT_SECRET || 'secret',
+            { expiresIn: '1d' }
+        );
+
+        res.json({ message: 'Tham gia thành công', coupleId: couple._id, accessToken });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
@@ -61,10 +93,74 @@ router.get('/me', authMiddleware, async (req: AuthRequest, res) => {
     try {
         const userId = req.user?.userId;
         const couple = await Couple.findOne({ memberIds: userId }).populate('memberIds', 'name email');
+
+        if (couple) {
+            const accessToken = jwt.sign(
+                { userId: userId, coupleId: couple._id },
+                process.env.JWT_SECRET || 'secret',
+                { expiresIn: '1d' }
+            );
+            return res.json({ ...couple.toObject(), accessToken });
+        }
+
         res.json(couple);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
 });
 
+router.get('/stats', authMiddleware, async (req: AuthRequest, res) => {
+    try {
+        const coupleId = req.user?.coupleId;
+        if (!coupleId) return res.status(400).json({ message: 'Không có couple' });
+
+        const couple = await Couple.findById(coupleId);
+        if (!couple) return res.status(404).json({ message: 'Couple không tồn tại' });
+
+        const now = new Date();
+        const baseDate = couple.pairedAt || couple.createdAt;
+        const diffTime = Math.abs(now.getTime() - new Date(baseDate).getTime());
+        const daysTogether = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        // Calculate Streak based on Check-ins
+        const checkins = await CheckIn.find({ coupleId })
+            .select('dateKey')
+            .sort({ dateKey: -1 });
+
+        const uniqueDates = Array.from(new Set(checkins.map(c => c.dateKey))).sort().reverse();
+
+        let streak = 0;
+        if (uniqueDates.length > 0) {
+            const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+            // Streak only counts if they checked in today or yesterday
+            if (uniqueDates[0] === today || uniqueDates[0] === yesterday) {
+                streak = 1;
+                for (let i = 0; i < uniqueDates.length - 1; i++) {
+                    const d1 = new Date(uniqueDates[i]);
+                    const d2 = new Date(uniqueDates[i + 1]);
+                    const diff = Math.abs(d1.getTime() - d2.getTime());
+                    const dayDiff = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+                    if (dayDiff === 1) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        res.json({
+            daysTogether,
+            streak,
+            pairDate: couple.createdAt
+        });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+import CheckIn from '../models/CheckIn';
 export default router;

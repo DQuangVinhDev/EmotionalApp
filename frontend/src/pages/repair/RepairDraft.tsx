@@ -83,8 +83,8 @@ export default function RepairDraft() {
                                 <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-amber-50 p-6 rounded-[2.25rem] border border-amber-100 flex gap-4 ring-4 ring-amber-500/5">
                                     <div className="text-amber-500 shrink-0"><InfoIcon size={24} /></div>
                                     <div className="space-y-1">
-                                        <p className="text-sm text-brown-800 font-black uppercase tracking-tight">Khuyên dùng: "Time-out"</p>
-                                        <p className="text-sm text-brown-600 font-medium leading-relaxed opacity-80">Bộ não đang ở trạng thái 'chiến đấu'. Bạn nên dành 20 phút hít thở sâu trước khi bắt đầu.</p>
+                                        <p className="text-sm text-amber-900 font-black uppercase tracking-tight">Khuyên dùng: "Time-out"</p>
+                                        <p className="text-sm text-amber-800 font-medium leading-relaxed opacity-90">Bộ não đang ở trạng thái 'chiến đấu'. Bạn nên dành 20 phút hít thở sâu trước khi bắt đầu.</p>
                                     </div>
                                 </motion.div>
                             )}
@@ -152,8 +152,8 @@ export default function RepairDraft() {
                             </section>
 
                             {/* Real-time Message Preview */}
-                            <div className="card-premium p-8 rounded-[3.5rem] bg-gray-900 border-none overflow-hidden relative shadow-2xl shadow-indigo-200">
-                                <div className="absolute top-4 right-6 text-gray-800 font-black text-[10px] tracking-[0.4em] uppercase">Preview</div>
+                            <div className="p-8 rounded-[3.5rem] bg-gray-900 border-none overflow-hidden relative shadow-2xl shadow-indigo-200">
+                                <div className="absolute top-4 right-6 text-gray-500 font-black text-[10px] tracking-[0.4em] uppercase">Preview</div>
                                 <div className="space-y-4">
                                     <div className="p-3 bg-indigo-500/10 rounded-2xl text-indigo-400 inline-block"><SendHorizonal size={24} /></div>
                                     <p className="text-white text-base font-bold italic leading-relaxed pr-2">"{generateMessage()}"</p>

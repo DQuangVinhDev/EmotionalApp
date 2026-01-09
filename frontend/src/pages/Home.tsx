@@ -2,10 +2,34 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
+import { useQuery } from '@tanstack/react-query';
+import client from '../api/client';
+import { useState, useEffect } from 'react';
+
+const LOVE_TIPS = [
+    "Một cái ôm lâu hơn 20 giây sẽ giúp giải phóng Oxytocin, hormone hạnh phúc.",
+    "Bắt đầu ngày mới bằng việc hỏi: 'Mình có thể làm gì để bạn thấy vui hơn?'",
+    "Kỹ thuật 5-1: Cần 5 tương tác tích cực để bù đắp 1 tương tác tiêu cực.",
+    "Nắm tay nhau 10 phút giúp điều hòa nhịp tim và giảm căng thẳng.",
+    "Thực hành lắng nghe không ngắt lời là món quà quý giá nhất."
+];
 
 export default function Home() {
     const navigate = useNavigate();
     const { user } = useAuthStore();
+    const [tip, setTip] = useState(LOVE_TIPS[0]);
+
+    useEffect(() => {
+        setTip(LOVE_TIPS[Math.floor(Math.random() * LOVE_TIPS.length)]);
+    }, []);
+
+    const { data: stats } = useQuery({
+        queryKey: ['couple-stats'],
+        queryFn: async () => {
+            const res = await client.get('/couple/stats');
+            return res.data;
+        }
+    });
 
     return (
         <div className="p-8 space-y-10 pb-32">
@@ -15,11 +39,13 @@ export default function Home() {
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-tight">
                         Chào <span className="text-rose-500">{user?.name.split(' ')[0]}</span>! ✨
                     </h1>
-                    <p className="text-gray-400 font-bold text-sm mt-1">Hôm nay hai người thế nào?</p>
+                    <p className="text-gray-400 font-bold text-sm mt-1">
+                        {stats?.daysTogether ? `Ngày thứ ${stats.daysTogether} bên nhau` : 'Hành trình mới bắt đầu'}
+                    </p>
                 </div>
                 <div className="flex items-center gap-2 bg-amber-50 px-4 py-2 rounded-2xl border border-amber-100 shadow-sm">
                     <Flame size={18} className="text-orange-500 fill-orange-500" />
-                    <span className="font-black text-orange-600 text-sm italic">7 Days</span>
+                    <span className="font-black text-orange-600 text-sm italic">{stats?.streak || 0} Days</span>
                 </div>
             </div>
 
@@ -34,7 +60,7 @@ export default function Home() {
                 </div>
                 <span className="badge badge-primary font-black text-[10px] tracking-widest uppercase py-3">Love Map Tip</span>
                 <p className="text-gray-700 font-bold text-lg leading-snug relative z-10">
-                    "Một cái ôm lâu hơn 20 giây sẽ giúp giải phóng Oxytocin, hormone hạnh phúc."
+                    "{tip}"
                 </p>
             </motion.div>
 

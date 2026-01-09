@@ -8,12 +8,24 @@ const router = Router();
 
 router.get('/today', authMiddleware, async (req: AuthRequest, res) => {
     try {
-        // For simplicity in MVP, pick a prompt based on the day of the year
         const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
         const count = await Prompt.countDocuments({ active: true });
         if (count === 0) return res.status(404).json({ message: 'Không có prompt' });
 
         const prompt = await Prompt.findOne({ active: true }).skip(dayOfYear % count);
+        res.json(prompt);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+router.get('/random', authMiddleware, async (req: AuthRequest, res) => {
+    try {
+        const count = await Prompt.countDocuments({ active: true });
+        if (count === 0) return res.status(404).json({ message: 'Không có prompt' });
+
+        const randomIndex = Math.floor(Math.random() * count);
+        const prompt = await Prompt.findOne({ active: true }).skip(randomIndex);
         res.json(prompt);
     } catch (error: any) {
         res.status(500).json({ message: error.message });

@@ -103,8 +103,8 @@ export default function Settings() {
             </motion.button>
 
             <div className="text-center space-y-2">
-                <p className="text-[10px] text-gray-300 font-black uppercase tracking-[0.4em]">Couple App v1.2.0 • Love & Tech</p>
-                <p className="text-[9px] text-gray-200 font-medium">Made with ❤️ for Vietnamese couples</p>
+
+                <p className="text-[9px] text-gray-200 font-medium">Made by Vinh ❤️ for Our Relationship</p>
             </div>
         </div>
     );

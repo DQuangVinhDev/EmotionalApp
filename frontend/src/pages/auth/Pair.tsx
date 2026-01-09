@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import client from '../../api/client';
 import { useAuthStore } from '../../store/useAuthStore';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,14 +13,39 @@ export default function Pair() {
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
     const { user, setUser } = useAuthStore();
+    const navigate = useNavigate();
+
+    // Auto-redirect if already paired
+    useEffect(() => {
+        if (user?.coupleId) {
+            navigate('/');
+        }
+    }, [user, navigate]);
 
     const handleCreate = async () => {
         try {
             const response = await client.post('/couple/create');
             setPairCode(response.data.pairCode);
+
+            if (response.data.accessToken) {
+                localStorage.setItem('accessToken', response.data.accessToken);
+                if (user) {
+                    setUser({ ...user, coupleId: response.data.coupleId });
+                }
+            }
             toast.success('Mã kết nối đã được tạo! 🎟️');
         } catch (err: any) {
-            toast.error(err.response?.data?.message || 'Lỗi khi tạo mã. Vui lòng thử lại.');
+            const data = err.response?.data;
+            if (data?.message === 'Bạn đã ở trong một couple hoàn chỉnh') {
+                if (data.accessToken) {
+                    localStorage.setItem('accessToken', data.accessToken);
+                    if (user) setUser({ ...user, coupleId: data.coupleId });
+                }
+                toast.info('Bạn đã có couple rồi! Đang chuyển hướng...');
+                setTimeout(() => navigate('/'), 1000);
+                return;
+            }
+            toast.error(data?.message || 'Lỗi khi tạo mã. Vui lòng thử lại.');
         }
     };
 
@@ -27,6 +53,11 @@ export default function Pair() {
         setLoading(true);
         try {
             const response = await client.post('/couple/join', { pairCode: code });
+
+            if (response.data.accessToken) {
+                localStorage.setItem('accessToken', response.data.accessToken);
+            }
+
             if (user) {
                 setUser({ ...user, coupleId: response.data.coupleId });
             }
@@ -37,8 +68,19 @@ export default function Pair() {
                 colors: ['#f43f5e', '#6366f1', '#ffffff']
             });
             toast.success('Kết nối thành công! Chào mừng hai bạn! ❤️');
+            setTimeout(() => navigate('/'), 1500);
         } catch (err: any) {
-            toast.error(err.response?.data?.message || 'Lỗi khi tham gia. Kiểm tra lại mã nhé.');
+            const data = err.response?.data;
+            if (data?.message === 'Bạn đã ở trong một couple') {
+                if (data.accessToken) {
+                    localStorage.setItem('accessToken', data.accessToken);
+                    if (user) setUser({ ...user, coupleId: data.coupleId });
+                }
+                toast.info('Bạn đã có couple rồi! Đang chuyển hướng...');
+                setTimeout(() => navigate('/'), 1000);
+                return;
+            }
+            toast.error(data?.message || 'Lỗi khi tham gia. Kiểm tra lại mã nhé.');
         } finally {
             setLoading(false);
         }
@@ -108,6 +150,12 @@ export default function Pair() {
                                 >
                                     {copied ? <Check size={18} /> : <Copy size={18} />}
                                     {copied ? 'Đã sao chép' : 'Sao chép mã'}
+                                </button>
+                                <button
+                                    onClick={() => navigate('/')}
+                                    className="btn btn-primary rounded-2xl w-full border-none shadow-lg shadow-rose-200 normal-case font-black"
+                                >
+                                    Đã gửi mã, vào Trang chủ <ArrowRight size={18} />
                                 </button>
                                 <p className="text-[9px] text-gray-400 font-bold uppercase italic">Gửi mã này cho đối tác của bạn ngay!</p>
                             </motion.div>

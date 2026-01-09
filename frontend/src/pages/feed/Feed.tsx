@@ -1,19 +1,37 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import client from '../../api/client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Send } from 'lucide-react';
+import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Send, Filter, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Feed() {
+    const [filterType, setFilterType] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [showFilters, setShowFilters] = useState(false);
+
     const { data: feed, isLoading, refetch } = useQuery({
-        queryKey: ['feed'],
+        queryKey: ['feed', filterType, startDate, endDate],
         queryFn: async () => {
-            const res = await client.get('/feed');
+            const params = new URLSearchParams();
+            if (filterType) params.append('type', filterType);
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+
+            const res = await client.get(`/feed?${params.toString()}`);
             return res.data;
         },
-        refetchInterval: 10000,
+        refetchInterval: showFilters ? undefined : 15000, // Sync slower when filtering
     });
+
+    const resetFilters = () => {
+        setFilterType('');
+        setStartDate('');
+        setEndDate('');
+    };
+
+    const hasActiveFilters = filterType || startDate || endDate;
 
     return (
         <div className="p-8 space-y-10 pb-32">
@@ -23,14 +41,82 @@ export default function Feed() {
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-none">Journal chung</h1>
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-3">Khoảnh khắc gắn kết của hai bạn</p>
                 </div>
-                <motion.button
-                    whileTap={{ rotate: 180 }}
-                    onClick={() => refetch()}
-                    className="btn btn-circle btn-ghost text-rose-500 bg-rose-50 border-none shadow-sm shadow-rose-100"
-                >
-                    <RefreshCcw size={20} />
-                </motion.button>
+                <div className="flex gap-2">
+                    <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setShowFilters(!showFilters)}
+                        className={`btn btn-circle btn-ghost ${showFilters ? 'bg-rose-500 text-white' : 'bg-rose-50 text-rose-500'} border-none shadow-sm`}
+                    >
+                        <Filter size={20} />
+                    </motion.button>
+                    <motion.button
+                        whileTap={{ rotate: 180 }}
+                        onClick={() => refetch()}
+                        className="btn btn-circle btn-ghost text-rose-500 bg-rose-50 border-none shadow-sm shadow-rose-100"
+                    >
+                        <RefreshCcw size={20} />
+                    </motion.button>
+                </div>
             </div>
+
+            {/* Filter Panel */}
+            <AnimatePresence>
+                {showFilters && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <div className="bg-gray-50 p-6 rounded-[2rem] space-y-6 border border-gray-100 shadow-inner">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Loại bài viết</label>
+                                    <select
+                                        value={filterType}
+                                        onChange={(e) => setFilterType(e.target.value)}
+                                        className="select select-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700"
+                                    >
+                                        <option value="">Tất cả</option>
+                                        <option value="CHECKIN">Mood Check-in</option>
+                                        <option value="KUDOS">Kudos</option>
+                                        <option value="REPAIR">Repair</option>
+                                        <option value="PROMPT_ANSWER">Love Map</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Từ ngày</label>
+                                    <input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="input input-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Đến ngày</label>
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        className="input input-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700"
+                                    />
+                                </div>
+                                <div className="flex items-end">
+                                    {hasActiveFilters && (
+                                        <button
+                                            onClick={resetFilters}
+                                            className="btn btn-ghost w-full rounded-2xl text-rose-500 font-bold hover:bg-rose-50 gap-2 normal-case"
+                                        >
+                                            <X size={16} /> Xóa bộ lọc
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="space-y-6">
                 {isLoading ? (
@@ -44,7 +130,14 @@ export default function Feed() {
                             <FeedItem key={item._id} item={item} idx={idx} />
                         )) : (
                             <div className="text-center py-20 bg-gray-50 rounded-[3rem] border border-dashed border-gray-200">
-                                <p className="text-gray-400 font-medium italic text-sm">Chưa có gì được chia sẻ hôm nay ✨</p>
+                                <p className="text-gray-400 font-medium italic text-sm">
+                                    {hasActiveFilters ? 'Không thấy bài viết nào phù hợp 🔍' : 'Chưa có gì được chia sẻ hôm nay ✨'}
+                                </p>
+                                {hasActiveFilters && (
+                                    <button onClick={resetFilters} className="btn btn-link text-rose-500 normal-case no-underline font-black mt-2">
+                                        Xem lại tất cả
+                                    </button>
+                                )}
                             </div>
                         )}
                     </AnimatePresence>
@@ -99,7 +192,7 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                     <div className="flex-1">
                         <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || 'Partner'}</h3>
                         <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
-                            <span className="w-1 h-1 bg-gray-300 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                            <span className="w-1 h-1 bg-gray-300 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' })}
                         </p>
                     </div>
                 </div>
