@@ -1,9 +1,13 @@
 {
     "name": "emotional-app-monorepo",
     "private": true,
+    "workspaces": [
+        "frontend",
+        "backend"
+    ],
     "scripts": {
-        "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install",
-        "build-frontend": "cd frontend && npm run build"
+        "build": "npm run build --workspace=frontend",
+        "postinstall": "npm install --workspace=frontend --workspace=backend"
     },
     "dependencies": {
         "bcryptjs": "^3.0.3",
