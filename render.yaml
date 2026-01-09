@@ -17,7 +17,7 @@ services:
         sync: false # Set in Render dashboard
 
   # Frontend Service
-  - type: static
+  - type: web
     name: emotional-frontend
     env: static
     rootDir: frontend
