@@ -1,13 +1,15 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import CheckIn from '../models/CheckIn';
 import Kudos from '../models/Kudos';
 import Repair from '../models/Repair';
 import PromptAnswer from '../models/PromptAnswer';
+import User from '../models/User';
+import { notifyPartner } from '../services/email';
 
 const router = Router();
 
-router.post('/', authMiddleware, async (req: AuthRequest, res) => {
+router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
     const { itemType, itemId, content } = req.body;
     const userId = req.user?.userId;
 
@@ -28,6 +30,18 @@ router.post('/', authMiddleware, async (req: AuthRequest, res) => {
 
         item.comments.push({ userId, content });
         await item.save();
+
+        // Notify partner
+        const user = await User.findById(userId);
+        const coupleId = item.coupleId;
+        if (user && coupleId) {
+            await notifyPartner(
+                String(userId),
+                String(coupleId),
+                `${user.name} đã bình luận về bài viết của bạn`,
+                `${user.name} vừa chia sẻ: "${content}"`
+            );
+        }
 
         res.json({ message: 'Comment added', comments: item.comments });
     } catch (error: any) {

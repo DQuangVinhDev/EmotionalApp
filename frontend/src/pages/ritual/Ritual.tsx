@@ -41,6 +41,10 @@ export default function Ritual() {
                 origin: { y: 0.6 }
             });
             toast.success('Phiên họp tuần này đã được lưu! 🍷');
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại';
+            toast.error(message);
         }
     });
 
@@ -54,6 +58,10 @@ export default function Ritual() {
             setNewBacklogTitle('');
             setShowAddBacklog(false);
             toast.success('Đã thêm vào danh sách chờ! 📝');
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại';
+            toast.error(message);
         }
     });
 
@@ -65,6 +73,10 @@ export default function Ritual() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['backlog'] });
             toast.info('Vấn đề đã được giải quyết! ✅');
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại';
+            toast.error(message);
         }
     });
 

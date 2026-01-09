@@ -92,6 +92,10 @@ export default function LoveMap() {
             });
             toast.success('Câu trả lời đã được lưu vào hành trình! ❤️');
             setTimeout(() => navigate('/'), 1500);
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại';
+            toast.error(message);
         }
     });
 

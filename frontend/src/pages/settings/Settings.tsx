@@ -29,6 +29,10 @@ export default function Settings() {
             queryClient.invalidateQueries({ queryKey: ['profile'] });
             setEditingType(null);
             toast.success('Cập nhật thành công! ✨');
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại';
+            toast.error(message);
         }
     });
 
@@ -130,9 +134,24 @@ function SettingItem({ icon, title, color, onClick }: any) {
 function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
     const [formData, setFormData] = useState({
         name: profile?.name || '',
+        email: profile?.email || '',
         timezone: profile?.timezone || 'Asia/Ho_Chi_Minh',
-        reminderTime: profile?.settings?.checkInReminderTime || '21:00'
+        emailNotifications: profile?.settings?.emailNotifications !== false // Default to true if undefined
     });
+
+    const handleSave = () => {
+        let payload: any = {};
+        if (type === 'PROFILE') {
+            payload = { name: formData.name, email: formData.email };
+        } else if (type === 'NOTIFICATIONS') {
+            payload = {
+                settings: {
+                    emailNotifications: formData.emailNotifications
+                }
+            };
+        }
+        onUpdate(payload);
+    };
 
     return (
         <motion.div
@@ -160,25 +179,41 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                 <div className="space-y-6">
                     {type === 'PROFILE' && (
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Họ và tên</label>
-                            <input
-                                type="text"
-                                className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold text-gray-900"
-                                value={formData.name}
-                                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                            />
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Họ và tên</label>
+                                <input
+                                    type="text"
+                                    className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold text-gray-900"
+                                    value={formData.name}
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label>
+                                <input
+                                    type="email"
+                                    className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold text-gray-900"
+                                    value={formData.email}
+                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                />
+                            </div>
                         </div>
                     )}
 
                     {type === 'NOTIFICATIONS' && (
-                        <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Giờ nhắc Check-in</label>
-                            <input
-                                type="time"
-                                className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold text-gray-900"
-                                value={formData.reminderTime}
-                                onChange={e => setFormData({ ...formData, reminderTime: e.target.value })}
-                            />
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between p-6 bg-orange-50/50 rounded-3xl border border-orange-100/50 transition-all">
+                                <div className="space-y-1">
+                                    <p className="font-black text-gray-800 text-sm">Thông báo qua Email</p>
+                                    <p className="text-[10px] text-gray-400 font-bold leading-tight">Nhận email khi đối phương tương tác</p>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    className="toggle toggle-warning toggle-lg"
+                                    checked={formData.emailNotifications}
+                                    onChange={e => setFormData({ ...formData, emailNotifications: e.target.checked })}
+                                />
+                            </div>
                         </div>
                     )}
 
@@ -192,7 +227,7 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
 
                 {type !== 'PRIVACY' && (
                     <button
-                        onClick={() => onUpdate(type === 'PROFILE' ? { name: formData.name } : { settings: { checkInReminderTime: formData.reminderTime } })}
+                        onClick={handleSave}
                         disabled={isPending}
                         className="w-full btn btn-primary btn-lg rounded-[2rem] border-none font-black shadow-xl shadow-rose-200 gap-2"
                     >

@@ -36,8 +36,9 @@ export default function RepairDraft() {
             });
             toast.success('Lời nhắn NVC đã được gửi! ❤️');
             navigate('/');
-        } catch (err) {
-            toast.error('Gặp lỗi khi gửi yêu cầu. Thử lại nhé.');
+        } catch (err: any) {
+            const message = err.response?.data?.message || 'Gặp lỗi khi gửi yêu cầu. Thử lại nhé.';
+            toast.error(message);
         } finally {
             setLoading(false);
         }

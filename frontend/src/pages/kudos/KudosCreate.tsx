@@ -29,8 +29,9 @@ export default function KudosCreate() {
 
             toast.success('Kudos đã được gửi vào Jar of Wins! 🏺');
             setTimeout(() => navigate('/'), 1500);
-        } catch (err) {
-            toast.error('Có lỗi xảy ra. Hãy thử lại sau ít phút.');
+        } catch (err: any) {
+            const message = err.response?.data?.message || 'Có lỗi xảy ra. Hãy thử lại sau ít phút.';
+            toast.error(message);
         } finally {
             setLoading(false);
         }

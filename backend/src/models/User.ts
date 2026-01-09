@@ -6,7 +6,7 @@ export interface IUser extends Document {
     name: string;
     timezone: string;
     settings: {
-        checkInReminderTime: string;
+        emailNotifications: boolean;
     };
     createdAt: Date;
     updatedAt: Date;
@@ -18,7 +18,7 @@ const UserSchema: Schema = new Schema({
     name: { type: String, required: true },
     timezone: { type: String, default: 'Asia/Ho_Chi_Minh' },
     settings: {
-        checkInReminderTime: { type: String, default: '21:00' }
+        emailNotifications: { type: Boolean, default: true }
     }
 }, { timestamps: true });
 

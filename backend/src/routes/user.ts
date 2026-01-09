@@ -17,11 +17,16 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res) => {
 // Update profile
 router.patch('/profile', authMiddleware, async (req: AuthRequest, res) => {
     try {
-        const { name, timezone, settings } = req.body;
+        const { name, email, timezone, settings } = req.body;
         const user = await User.findById(req.user?.userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         if (name) user.name = name;
+        if (email) {
+            const existingUser = await User.findOne({ email, _id: { $ne: user._id } });
+            if (existingUser) return res.status(400).json({ message: 'Email đã được sử dụng' });
+            user.email = email;
+        }
         if (timezone) user.timezone = timezone;
         if (settings) user.settings = { ...user.settings, ...settings };
 

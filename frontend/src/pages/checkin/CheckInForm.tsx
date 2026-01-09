@@ -45,8 +45,9 @@ export default function CheckInForm() {
 
             toast.success('Check-in thành công! Ghi nhận vào Journal.');
             setTimeout(() => navigate('/'), 1500);
-        } catch (err) {
-            toast.error('Có lỗi khi lưu thông tin. Vui lòng thử lại.');
+        } catch (err: any) {
+            const message = err.response?.data?.message || 'Có lỗi khi lưu thông tin. Vui lòng thử lại.';
+            toast.error(message);
         } finally {
             setLoading(false);
         }
