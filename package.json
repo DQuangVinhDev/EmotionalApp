@@ -6,8 +6,7 @@
         "backend"
     ],
     "scripts": {
-        "build": "npm run build --workspace=frontend",
-        "postinstall": "npm install --workspace=frontend --workspace=backend"
+        "build": "npm run build --workspace=frontend"
     },
     "dependencies": {
         "bcryptjs": "^3.0.3",
