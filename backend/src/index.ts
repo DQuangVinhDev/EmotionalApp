@@ -49,21 +49,12 @@ const connectDB = async () => {
     }
 };
 
-// Vercel serverless function entry
-if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 5000;
-    connectDB().then(() => {
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-            startCronJobs();
-        });
+const PORT = process.env.PORT || 5000;
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+        startCronJobs();
     });
-} else {
-    // In production (Vercel), we connect on the first request if not connected
-    app.use(async (req: any, res: any, next: any) => {
-        await connectDB();
-        next();
-    });
-}
+});
 
 export default app;

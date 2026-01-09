@@ -1,0 +1,32 @@
+services:
+  # Backend Service
+  - type: web
+    name: emotional-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false # Set in Render dashboard
+      - key: JWT_SECRET
+        sync: false # Set in Render dashboard
+      - key: REFRESH_SECRET
+        sync: false # Set in Render dashboard
+
+  # Frontend Service
+  - type: web
+    name: emotional-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false # Set to your backend URL (e.g., https://emotional-backend.onrender.com)
+    routes:
+      - type: rewrite
+        src: /*
+        dest: /index.html
