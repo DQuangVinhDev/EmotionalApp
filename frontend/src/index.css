@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --color-brand-50: #fff1f2;
+  --color-brand-100: #ffe4e6;
+  --color-brand-200: #fecdd3;
+  --color-brand-300: #fda4af;
+  --color-brand-400: #fb7185;
+  --color-brand-500: #f43f5e;
+  --color-brand-600: #e11d48;
+  --color-brand-700: #be123c;
+  --color-brand-800: #9f1239;
+  --color-brand-900: #881337;
+
+  --radius-4xl: 2rem;
+  --radius-5xl: 3rem;
+}
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  @apply bg-base-200 text-base-content min-h-screen;
+  background-image: radial-gradient(at 0% 0%, hsla(353, 100%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(339, 49%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339, 49%, 95%, 1) 0, transparent 50%);
+}
+
+.mobile-view {
+  @apply bg-base-100 min-h-screen relative overflow-x-hidden transition-all duration-300;
+}
+
+@media (min-width: 640px) {
+  .mobile-view {
+    max-width: 430px;
+    margin: 2rem auto;
+    min-height: calc(100vh - 4rem);
+    border-radius: 3rem;
+    @apply shadow-2xl border border-white/20 ring-1 ring-black/5;
+  }
+}
+
+.glass-nav {
+  @apply bg-white/70 backdrop-blur-xl border-t border-white/20;
+}
+
+.btn-premium {
+  @apply btn btn-primary border-none shadow-lg transition-all duration-300;
+}
+
+.card-premium {
+  @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl shadow-black/5;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-rose-200 rounded-full;
+}
