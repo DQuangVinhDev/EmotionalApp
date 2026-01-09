@@ -19,14 +19,16 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
         });
         await kudos.save();
 
-        const user = await User.findById(fromUserId);
-        if (user && coupleId) {
-            notifyPartner(
-                String(fromUserId),
-                String(coupleId),
-                `${user.name} vừa gửi cho bạn một lời khen ngợi! 🌟`,
-                `${user.name} vừa cho thêm một "hạt mầm" vào Jar of Wins: "${req.body.text}"`
-            );
+        if (kudos.visibility === VisibilityType.SHARED_NOW) {
+            const user = await User.findById(fromUserId);
+            if (user && coupleId) {
+                notifyPartner(
+                    String(fromUserId),
+                    String(coupleId),
+                    `${user.name} vừa gửi cho bạn một lời khen ngợi! 🌟`,
+                    `${user.name} vừa cho thêm một "hạt mầm" vào Jar of Wins: "${req.body.text}"`
+                );
+            }
         }
 
         res.status(201).json(kudos);

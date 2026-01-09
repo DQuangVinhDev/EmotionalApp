@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
-import CheckIn from '../models/CheckIn';
+import CheckIn, { VisibilityType } from '../models/CheckIn';
 import Kudos from '../models/Kudos';
 import Repair from '../models/Repair';
 import PromptAnswer from '../models/PromptAnswer';
@@ -31,16 +31,18 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
         item.comments.push({ userId, content });
         await item.save();
 
-        // Notify partner
-        const user = await User.findById(userId);
-        const coupleId = item.coupleId;
-        if (user && coupleId) {
-            notifyPartner(
-                String(userId),
-                String(coupleId),
-                `${user.name} đã bình luận về bài viết của bạn`,
-                `${user.name} vừa chia sẻ: "${content}"`
-            );
+        // Only notify partner if item is shared
+        if (item.visibility === VisibilityType.SHARED_NOW) {
+            const user = await User.findById(userId);
+            const coupleId = item.coupleId;
+            if (user && coupleId) {
+                notifyPartner(
+                    String(userId),
+                    String(coupleId),
+                    `${user.name} đã bình luận về bài viết của bạn`,
+                    `${user.name} vừa chia sẻ: "${content}"`
+                );
+            }
         }
 
         res.json({ message: 'Comment added', comments: item.comments });

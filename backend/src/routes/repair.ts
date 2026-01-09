@@ -45,11 +45,11 @@ router.post('/:id/respond', authMiddleware, async (req: AuthRequest, res: Respon
         await repair.save();
 
         const user = await User.findById(req.user?.userId);
-        if (user && repair.coupleId) {
+        if (user && repair.coupleId && repair.visibility === VisibilityType.SHARED_NOW) {
             notifyPartner(
                 String(user._id),
                 String(repair.coupleId),
-                `${user.name} đã phán hồi thông điệp của bạn`,
+                `${user.name} đã phản hồi thông điệp của bạn`,
                 `${user.name} vừa gửi phản hồi trong Repair Loop. Hãy cùng nhau tìm tiếng nói chung nhé! ✨`
             );
         }
