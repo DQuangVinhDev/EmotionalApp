@@ -15,6 +15,9 @@ import userRoutes from './routes/user';
 import { startCronJobs } from './services/cron';
 import { seedPrompts } from './services/seed';
 
+import memoryRoutes from './routes/memory';
+import commentRoutes from './routes/comment';
+
 dotenv.config();
 
 const app = express();
@@ -33,6 +36,8 @@ app.use('/weekly', weeklyRoutes);
 app.use('/backlog', backlogRoutes);
 app.use('/feed', feedRoutes);
 app.use('/users', userRoutes);
+app.use('/memory', memoryRoutes);
+app.use('/comments', commentRoutes);
 
 // Basic health check
 app.get('/ping', (req: any, res: any) => res.send('pong'));

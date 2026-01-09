@@ -58,7 +58,12 @@ const RepairSchema: Schema = new Schema({
     agreement: {
         outcome: { type: String, enum: Object.values(OutcomeType) },
         aftercare: { type: String }
-    }
+    },
+    comments: [{
+        userId: { type: Schema.Types.ObjectId, ref: 'User' },
+        content: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now }
+    }]
 }, { timestamps: true });
 
 export default mongoose.model<IRepair>('Repair', RepairSchema);

@@ -16,6 +16,7 @@ import RepairDraft from './pages/repair/RepairDraft';
 import Ritual from './pages/ritual/Ritual';
 import Settings from './pages/settings/Settings';
 import LoveMap from './pages/lovemap/LoveMap';
+import MemoryLane from './pages/memory/MemoryLane';
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ export default function App() {
                         <Route path="/ritual" element={<ProtectedRoute><Ritual /></ProtectedRoute>} />
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                         <Route path="/lovemap" element={<ProtectedRoute><LoveMap /></ProtectedRoute>} />
+                        <Route path="/memory-lane" element={<ProtectedRoute><MemoryLane /></ProtectedRoute>} />
                     </Route>
                 </Routes>
             </BrowserRouter>

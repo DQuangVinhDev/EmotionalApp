@@ -163,7 +163,7 @@ export default function Ritual() {
                                         <input
                                             type="text"
                                             placeholder="Ghi nhanh vấn đề..."
-                                            className="input w-full bg-white rounded-2xl border-none ring-1 ring-indigo-100 focus:ring-2 focus:ring-indigo-500 font-bold"
+                                            className="input w-full bg-white rounded-2xl border-none ring-1 ring-indigo-100 focus:ring-2 focus:ring-indigo-500 font-bold text-gray-900"
                                             value={newBacklogTitle}
                                             onChange={(e) => setNewBacklogTitle(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && newBacklogTitle && addBacklog.mutate(newBacklogTitle)}
@@ -235,7 +235,7 @@ function QuestionBox({ num, q, color, value, onChange }: { num: string; q: strin
             </div>
             <textarea
                 placeholder="Cùng nhau suy nghĩ và viết tại đây..."
-                className="textarea w-full p-6 bg-gray-50/50 focus:bg-white rounded-[1.75rem] text-sm font-bold border-none outline-none focus:ring-4 focus:ring-rose-500/5 resize-none h-32 italic text-gray-600"
+                className="textarea w-full p-6 bg-gray-50/50 focus:bg-white rounded-[1.75rem] text-sm font-bold border-none outline-none focus:ring-4 focus:ring-rose-500/5 resize-none h-32 italic text-gray-900"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
             />

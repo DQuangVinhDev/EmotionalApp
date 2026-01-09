@@ -16,10 +16,10 @@ router.get('/', authMiddleware, async (req: AuthRequest, res) => {
 
         // Fetch shared items from all collections
         const [checkins, kudos, answers, repairs] = await Promise.all([
-            CheckIn.find({ coupleId, sharedAt: { $ne: null } }).sort({ sharedAt: -1 }).limit(limit).populate('userId', 'name'),
-            Kudos.find({ coupleId, sharedAt: { $ne: null } }).sort({ sharedAt: -1 }).limit(limit).populate('fromUserId', 'name'),
-            PromptAnswer.find({ coupleId, sharedAt: { $ne: null } }).sort({ sharedAt: -1 }).limit(limit).populate('userId', 'name').populate('promptId'),
-            Repair.find({ coupleId, sharedAt: { $ne: null } }).sort({ sharedAt: -1 }).limit(limit).populate('initiatorUserId', 'name')
+            CheckIn.find({ coupleId, sharedAt: { $ne: null } }).sort({ sharedAt: -1 }).limit(limit).populate('userId', 'name').populate('comments.userId', 'name'),
+            Kudos.find({ coupleId, sharedAt: { $ne: null } }).sort({ sharedAt: -1 }).limit(limit).populate('fromUserId', 'name').populate('comments.userId', 'name'),
+            PromptAnswer.find({ coupleId, sharedAt: { $ne: null } }).sort({ sharedAt: -1 }).limit(limit).populate('userId', 'name').populate('promptId').populate('comments.userId', 'name'),
+            Repair.find({ coupleId, sharedAt: { $ne: null } }).sort({ sharedAt: -1 }).limit(limit).populate('initiatorUserId', 'name').populate('comments.userId', 'name')
         ]);
 
         // Map and tag with itemType

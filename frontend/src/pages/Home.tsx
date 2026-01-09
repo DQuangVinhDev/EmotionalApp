@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight } from 'lucide-react';
+import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 
 export default function Home() {
@@ -77,6 +77,13 @@ export default function Home() {
                         icon={<Calendar size={24} />}
                         color="bg-violet-500"
                         onClick={() => navigate('/ritual')}
+                    />
+                    <MainFeature
+                        title="Memory Lane"
+                        desc="Hành trình & Kỷ niệm"
+                        icon={<History size={24} />}
+                        color="bg-rose-400"
+                        onClick={() => navigate('/memory-lane')}
                     />
                 </div>
             </div>

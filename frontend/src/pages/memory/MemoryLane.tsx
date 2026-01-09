@@ -1,15 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import client from '../../api/client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Send } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Lock, Globe } from 'lucide-react';
 
-export default function Feed() {
+export default function MemoryLane() {
     const { data: feed, isLoading, refetch } = useQuery({
-        queryKey: ['feed'],
+        queryKey: ['memory-lane'],
         queryFn: async () => {
-            const res = await client.get('/feed');
+            const res = await client.get('/memory');
             return res.data;
         },
         refetchInterval: 10000,
@@ -20,8 +18,8 @@ export default function Feed() {
             {/* Dynamic Header */}
             <div className="pt-6 flex justify-between items-end">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-none">Journal chung</h1>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-3">Khoảnh khắc gắn kết của hai bạn</p>
+                    <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-none">Memory Lane</h1>
+                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-[0.2em] mt-3">Hành trình & Kỷ niệm của riêng bạn</p>
                 </div>
                 <motion.button
                     whileTap={{ rotate: 180 }}
@@ -36,15 +34,15 @@ export default function Feed() {
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center p-20 space-y-4">
                         <span className="loading loading-spinner loading-lg text-rose-500"></span>
-                        <p className="text-gray-300 font-bold uppercase text-[10px] tracking-widest animate-pulse">Đang đồng bộ dữ liệu...</p>
+                        <p className="text-gray-300 font-bold uppercase text-[10px] tracking-widest animate-pulse">Đang hồi tưởng...</p>
                     </div>
                 ) : (
                     <AnimatePresence mode="popLayout">
                         {feed?.length > 0 ? feed.map((item: any, idx: number) => (
-                            <FeedItem key={item._id} item={item} idx={idx} />
+                            <MemoryItem key={item._id} item={item} idx={idx} />
                         )) : (
                             <div className="text-center py-20 bg-gray-50 rounded-[3rem] border border-dashed border-gray-200">
-                                <p className="text-gray-400 font-medium italic text-sm">Chưa có gì được chia sẻ hôm nay ✨</p>
+                                <p className="text-gray-400 font-medium italic text-sm">Chưa có ký ức nào được lưu lại ✨</p>
                             </div>
                         )}
                     </AnimatePresence>
@@ -54,28 +52,12 @@ export default function Feed() {
     );
 }
 
-function FeedItem({ item, idx }: { item: any; idx: number }) {
+function MemoryItem({ item, idx }: { item: any; idx: number }) {
     const isKudos = item.itemType === 'KUDOS';
     const isCheckin = item.itemType === 'CHECKIN';
     const isRepair = item.itemType === 'REPAIR';
     const isPrompt = item.itemType === 'PROMPT_ANSWER';
-    const [comment, setComment] = useState('');
-    const queryClient = useQueryClient();
-
-    const addComment = useMutation({
-        mutationFn: async () => {
-            return client.post('/comments', {
-                itemType: item.itemType,
-                itemId: item._id,
-                content: comment
-            });
-        },
-        onSuccess: () => {
-            setComment('');
-            queryClient.invalidateQueries({ queryKey: ['feed'] });
-            toast.success('Đã gửi phản hồi! 💌');
-        }
-    });
+    const isPrivate = item.visibility === 'PRIVATE';
 
     return (
         <motion.div
@@ -97,9 +79,16 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                         </div>
                     </div>
                     <div className="flex-1">
-                        <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || 'Partner'}</h3>
+                        <div className="flex items-center gap-2">
+                            <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || 'Me'}</h3>
+                            {isPrivate ? (
+                                <span className="p-1 bg-gray-100 rounded-md text-gray-400"><Lock size={12} /></span>
+                            ) : (
+                                <span className="p-1 bg-rose-50 rounded-md text-rose-400"><Globe size={12} /></span>
+                            )}
+                        </div>
                         <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
-                            <span className="w-1 h-1 bg-gray-300 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                            <span className="w-1 h-1 bg-gray-300 rounded-full" /> {item.itemType} • {new Date(item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' })}
                         </p>
                     </div>
                 </div>
@@ -162,42 +151,6 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                             </div>
                         </div>
                     )}
-                </div>
-
-                {/* Comment Section */}
-                <div className="pt-6 border-t border-gray-100 space-y-4">
-                    {item.comments && item.comments.length > 0 && (
-                        <div className="space-y-3">
-                            {item.comments.map((c: any, i: number) => (
-                                <div key={i} className="flex gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0">
-                                        {c.userId?.name?.[0] || 'U'}
-                                    </div>
-                                    <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3 px-4 text-sm font-medium text-gray-700">
-                                        {c.content}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            placeholder="Viết phản hồi của bạn..."
-                            className="input w-full bg-gray-50 rounded-full text-sm font-bold focus:bg-white transition-colors border-none ring-1 ring-gray-100 focus:ring-2 focus:ring-rose-200 text-gray-900"
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && comment && addComment.mutate()}
-                        />
-                        <button
-                            onClick={() => addComment.mutate()}
-                            disabled={!comment || addComment.isPending}
-                            className="btn btn-circle btn-primary bg-rose-500 border-none text-white shadow-lg shadow-rose-200"
-                        >
-                            {addComment.isPending ? <span className="loading loading-spinner loading-xs"></span> : <Send size={16} />}
-                        </button>
-                    </div>
                 </div>
             </div>
         </motion.div>

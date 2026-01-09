@@ -41,7 +41,12 @@ const CheckInSchema: Schema = new Schema({
     gratitudeText: { type: String },
     visibility: { type: String, enum: Object.values(VisibilityType), default: VisibilityType.PRIVATE },
     scheduledShareAt: { type: Date },
-    sharedAt: { type: Date }
+    sharedAt: { type: Date },
+    comments: [{
+        userId: { type: Schema.Types.ObjectId, ref: 'User' },
+        content: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now }
+    }]
 }, { timestamps: true });
 
 export default mongoose.model<ICheckIn>('CheckIn', CheckInSchema);
