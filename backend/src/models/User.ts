@@ -5,6 +5,7 @@ export interface IUser extends Document {
     passwordHash: string;
     name: string;
     timezone: string;
+    avatarUrl?: string;
     settings: {
         emailNotifications: boolean;
     };
@@ -17,6 +18,7 @@ const UserSchema: Schema = new Schema({
     passwordHash: { type: String, required: true },
     name: { type: String, required: true },
     timezone: { type: String, default: 'Asia/Ho_Chi_Minh' },
+    avatarUrl: { type: String },
     settings: {
         emailNotifications: { type: Boolean, default: true }
     }

@@ -1,9 +1,9 @@
-import { LogOut, User, Bell, ChevronRight, ShieldCheck, Heart, Crown, X, Save } from 'lucide-react';
+import { LogOut, User, Bell, ChevronRight, ShieldCheck, Heart, Crown, X, Save, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import client from '../../api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
 
 export default function Settings() {
@@ -52,8 +52,12 @@ export default function Settings() {
                 <div className="absolute -top-10 -right-10 text-rose-100/50 -rotate-12"><Crown size={120} /></div>
 
                 <div className="relative mb-6">
-                    <div className="w-24 h-24 bg-rose-500 rounded-[2rem] flex items-center justify-center text-4xl text-white font-black shadow-2xl shadow-rose-200 rotate-3">
-                        {profile?.name?.[0].toUpperCase() || '?'}
+                    <div className="w-24 h-24 bg-rose-500 rounded-[2.5rem] flex items-center justify-center text-4xl text-white font-black shadow-2xl shadow-rose-200 rotate-3 overflow-hidden">
+                        {profile?.avatarUrl ? (
+                            <img src={profile.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                        ) : (
+                            profile?.name?.[0].toUpperCase() || '?'
+                        )}
                     </div>
                     <div className="absolute -bottom-2 -right-2 p-2 bg-white rounded-xl shadow-lg border border-rose-50 text-rose-500">
                         <Heart size={16} fill="currentColor" />
@@ -107,7 +111,6 @@ export default function Settings() {
             </motion.button>
 
             <div className="text-center space-y-2">
-
                 <p className="text-[9px] text-gray-200 font-medium">Made by Vinh ❤️ for Our Relationship</p>
             </div>
         </div>
@@ -135,14 +138,30 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
     const [formData, setFormData] = useState({
         name: profile?.name || '',
         email: profile?.email || '',
+        avatarUrl: profile?.avatarUrl || '',
         timezone: profile?.timezone || 'Asia/Ho_Chi_Minh',
-        emailNotifications: profile?.settings?.emailNotifications !== false // Default to true if undefined
+        emailNotifications: profile?.settings?.emailNotifications !== false
     });
+
+    useEffect(() => {
+        if (profile) {
+            setFormData({
+                name: profile.name || '',
+                email: profile.email || '',
+                avatarUrl: profile.avatarUrl || '',
+                timezone: profile.timezone || 'Asia/Ho_Chi_Minh',
+                emailNotifications: profile.settings?.emailNotifications !== false
+            });
+        }
+    }, [profile]);
 
     const handleSave = () => {
         let payload: any = {};
         if (type === 'PROFILE') {
-            payload = { name: formData.name, email: formData.email };
+            // Only send changed fields and handle them as optional
+            if (formData.name !== profile?.name) payload.name = formData.name;
+            if (formData.email !== profile?.email) payload.email = formData.email;
+            if (formData.avatarUrl !== profile?.avatarUrl) payload.avatarUrl = formData.avatarUrl;
         } else if (type === 'NOTIFICATIONS') {
             payload = {
                 settings: {
@@ -150,6 +169,12 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                 }
             };
         }
+
+        if (Object.keys(payload).length === 0 && type === 'PROFILE') {
+            onClose();
+            return;
+        }
+
         onUpdate(payload);
     };
 
@@ -196,6 +221,69 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                                     value={formData.email}
                                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                                 />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Ảnh đại diện</label>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-16 h-16 rounded-2xl bg-gray-50 ring-1 ring-gray-100 overflow-hidden flex items-center justify-center shrink-0">
+                                        {formData.avatarUrl ? (
+                                            <img src={formData.avatarUrl} alt="preview" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <ImageIcon size={24} className="text-gray-200" />
+                                        )}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const widget = window.cloudinary.createUploadWidget(
+                                                {
+                                                    cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+                                                    uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
+                                                    sources: ['local', 'camera'],
+                                                    multiple: false,
+                                                    cropping: true,
+                                                    croppingAspectRatio: 1,
+                                                    showSkipCropButton: false,
+                                                    language: 'vi',
+                                                    styles: {
+                                                        palette: {
+                                                            window: '#FFFFFF',
+                                                            sourceBg: '#F4F4F5',
+                                                            windowBorder: '#E4E4E7',
+                                                            tabIcon: '#F43F5E',
+                                                            inactiveTabIcon: '#94A3B8',
+                                                            menuIcons: '#F43F5E',
+                                                            link: '#F43F5E',
+                                                            action: '#F43F5E',
+                                                            inProgress: '#F43F5E',
+                                                            complete: '#10B981',
+                                                            error: '#EF4444',
+                                                            textDark: '#000000',
+                                                            textLight: '#FFFFFF'
+                                                        },
+                                                        frame: {
+                                                            width: '100%',
+                                                            max_width: '430px',
+                                                            height: '100%',
+                                                            margin: '0',
+                                                            position: 'fixed'
+                                                        }
+                                                    }
+                                                },
+                                                (error: any, result: any) => {
+                                                    if (!error && result && result.event === 'success') {
+                                                        setFormData({ ...formData, avatarUrl: result.info.secure_url });
+                                                        toast.success('Ảnh đại diện đã sẵn sàng! ✨');
+                                                    }
+                                                }
+                                            );
+                                            widget.open();
+                                        }}
+                                        className="flex-1 bg-rose-50 text-rose-500 hover:bg-rose-100 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-rose-100"
+                                    >
+                                        {formData.avatarUrl ? 'Thay đổi ảnh' : 'Chọn ảnh đại diện'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}

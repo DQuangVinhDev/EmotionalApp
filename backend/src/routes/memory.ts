@@ -64,10 +64,10 @@ router.get('/', authMiddleware, async (req: AuthRequest, res) => {
         const fetchRepairs = !type || type === 'REPAIR';
 
         const [checkins, kudos, answers, repairs] = await Promise.all([
-            fetchCheckins ? CheckIn.find(query).sort({ createdAt: -1 }).limit(limit).populate('userId', 'name').populate('comments.userId', 'name') : [],
-            fetchKudos ? Kudos.find(kudosQuery).sort({ createdAt: -1 }).limit(limit).populate('fromUserId', 'name').populate('toUserId', 'name').populate('comments.userId', 'name') : [],
-            fetchAnswers ? PromptAnswer.find(query).sort({ createdAt: -1 }).limit(limit).populate('userId', 'name').populate('promptId').populate('comments.userId', 'name') : [],
-            fetchRepairs ? Repair.find(repairQuery).sort({ createdAt: -1 }).limit(limit).populate('initiatorUserId', 'name').populate('comments.userId', 'name') : []
+            fetchCheckins ? CheckIn.find(query).sort({ createdAt: -1 }).limit(limit).populate('userId', 'name avatarUrl').populate('comments.userId', 'name avatarUrl') : [],
+            fetchKudos ? Kudos.find(kudosQuery).sort({ createdAt: -1 }).limit(limit).populate('fromUserId', 'name avatarUrl').populate('toUserId', 'name avatarUrl').populate('comments.userId', 'name avatarUrl') : [],
+            fetchAnswers ? PromptAnswer.find(query).sort({ createdAt: -1 }).limit(limit).populate('userId', 'name avatarUrl').populate('promptId').populate('comments.userId', 'name avatarUrl') : [],
+            fetchRepairs ? Repair.find(repairQuery).sort({ createdAt: -1 }).limit(limit).populate('initiatorUserId', 'name avatarUrl').populate('comments.userId', 'name avatarUrl') : []
         ]);
 
         // Map and tag

@@ -10,6 +10,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+  <style>
+    /* Force Cloudinary Widget to Mobile Layout */
+    #cloudinary-overlay {
+      z-index: 10000 !important;
+    }
+
+    .cloudinary_widget {
+      width: 100% !important;
+      max-width: 430px !important;
+      height: 100% !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      margin: 0 !important;
+    }
+
+    iframe[data-test="uw-iframe"] {
+      width: 100% !important;
+      max-width: 430px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+    }
+  </style>
 </head>
 
 <body>

@@ -152,6 +152,10 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
     const isCheckin = item.itemType === 'CHECKIN';
     const isRepair = item.itemType === 'REPAIR';
     const isPrompt = item.itemType === 'PROMPT_ANSWER';
+    const [showAllComments, setShowAllComments] = useState(false);
+    const visibleComments = showAllComments ? item.comments : item.comments?.slice(-3);
+    const hasMoreComments = item.comments?.length > 3;
+
     const [comment, setComment] = useState('');
     const queryClient = useQueryClient();
 
@@ -184,13 +188,21 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
 
             <div className="relative z-10 flex flex-col gap-6">
                 <div className="flex items-center gap-4">
-                    <div className="avatar placeholder">
-                        <div className={`w-12 rounded-2xl ${isKudos ? 'bg-amber-400' : isCheckin ? 'bg-emerald-400' : isPrompt ? 'bg-rose-400' : 'bg-rose-400'} text-white font-black shadow-lg`}>
-                            <span>{item.userId?.name?.[0] || item.fromUserId?.name?.[0] || 'U'}</span>
+                    <div className="avatar">
+                        <div className={`w-12 h-12 rounded-2xl ${isKudos ? 'bg-amber-400' : isCheckin ? 'bg-emerald-400' : isPrompt ? 'bg-rose-400' : 'bg-rose-400'} text-white font-black shadow-lg overflow-hidden flex items-center justify-center`}>
+                            {(item.userId?.avatarUrl || item.fromUserId?.avatarUrl || item.initiatorUserId?.avatarUrl) ? (
+                                <img
+                                    src={item.userId?.avatarUrl || item.fromUserId?.avatarUrl || item.initiatorUserId?.avatarUrl}
+                                    alt="avatar"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span>{(item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name)?.[0] || 'U'}</span>
+                            )}
                         </div>
                     </div>
                     <div className="flex-1">
-                        <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || 'Partner'}</h3>
+                        <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Partner'}</h3>
                         <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
                             <span className="w-1 h-1 bg-gray-300 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' })}
                         </p>
@@ -248,7 +260,7 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                         <div className="space-y-4">
                             <div className="p-6 bg-white rounded-[2rem] border border-rose-100 shadow-sm relative">
                                 <p className="text-[10px] font-black text-rose-300 uppercase tracking-widest mb-2 italic">Chủ đề: {item.promptId?.text}</p>
-                                <p className="text-gray-800 font-bold italic leading-relaxed">"{item.text}"</p>
+                                <p className="text-gray-800 font-bold italic leading-relaxed">"{item.answerText}"</p>
                             </div>
                             <div className="flex items-center gap-2 text-rose-400 font-black text-[10px] tracking-widest uppercase ml-4">
                                 <Heart size={14} fill="currentColor" /> Love Map Answer
@@ -261,16 +273,38 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                 <div className="pt-6 border-t border-gray-100 space-y-4">
                     {item.comments && item.comments.length > 0 && (
                         <div className="space-y-3">
-                            {item.comments.map((c: any, i: number) => (
+                            {hasMoreComments && !showAllComments && (
+                                <button
+                                    onClick={() => setShowAllComments(true)}
+                                    className="text-[10px] font-black text-rose-400 uppercase tracking-widest ml-11 hover:text-rose-500 transition-colors"
+                                >
+                                    Xem thêm {item.comments.length - 3} bình luận...
+                                </button>
+                            )}
+
+                            {visibleComments.map((c: any, i: number) => (
                                 <div key={i} className="flex gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400 shrink-0">
-                                        {c.userId?.name?.[0] || 'U'}
+                                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                        {c.userId?.avatarUrl ? (
+                                            <img src={c.userId.avatarUrl} alt="c" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-[10px] font-black text-gray-400 uppercase">{c.userId?.name?.[0] || 'U'}</span>
+                                        )}
                                     </div>
                                     <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3 px-4 text-sm font-medium text-gray-700">
                                         {c.content}
                                     </div>
                                 </div>
                             ))}
+
+                            {showAllComments && hasMoreComments && (
+                                <button
+                                    onClick={() => setShowAllComments(false)}
+                                    className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-11 hover:text-gray-500 transition-colors"
+                                >
+                                    Thu gọn
+                                </button>
+                            )}
                         </div>
                     )}
 

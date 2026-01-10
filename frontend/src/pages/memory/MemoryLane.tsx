@@ -1,144 +1,98 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import client from '../../api/client';
+import { ChevronLeft, Calendar, Search, Filter, MessageCircle, Star, ShieldAlert, Sparkles, Heart, Lock, Globe, Quote } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Lock, Globe, Filter, X } from 'lucide-react';
-import { useState } from 'react';
 
 export default function MemoryLane() {
-    const [filterType, setFilterType] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [showFilters, setShowFilters] = useState(false);
+    const navigate = useNavigate();
+    const [filter, setFilter] = useState<'ALL' | 'CHECKIN' | 'KUDOS' | 'PROMPT_ANSWER' | 'REPAIR'>('ALL');
+    const [searchTerm, setSearchTerm] = useState('');
 
-    const { data: feed, isLoading, refetch } = useQuery({
-        queryKey: ['memory-lane', filterType, startDate, endDate],
+    const { data: memories, isLoading } = useQuery({
+        queryKey: ['memories', filter],
         queryFn: async () => {
-            const params = new URLSearchParams();
-            if (filterType) params.append('type', filterType);
-            if (startDate) params.append('startDate', startDate);
-            if (endDate) params.append('endDate', endDate);
-
-            const res = await client.get(`/memory?${params.toString()}`);
+            const res = await client.get('/memory', {
+                params: { type: filter === 'ALL' ? undefined : filter }
+            });
             return res.data;
-        },
+        }
     });
 
-    const resetFilters = () => {
-        setFilterType('');
-        setStartDate('');
-        setEndDate('');
-    };
-
-    const hasActiveFilters = filterType || startDate || endDate;
+    const filteredMemories = memories?.filter((m: any) =>
+        m.text?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        m.answerText?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        m.generatedMessage?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        m.gratitudeText?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
-        <div className="p-8 space-y-10 pb-32">
-            {/* Dynamic Header */}
-            <div className="pt-6 flex justify-between items-end">
-                <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-none">Memory Lane</h1>
-                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-[0.2em] mt-3">Hành trình & Kỷ niệm của riêng bạn</p>
+        <div className="bg-white min-h-screen pb-32">
+            {/* Header */}
+            <div className="p-6 bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-gray-50">
+                <div className="flex items-center gap-4 mb-6">
+                    <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors">
+                        <ChevronLeft size={24} />
+                    </button>
+                    <div className="flex-1">
+                        <h1 className="text-xl font-black text-gray-900 tracking-tight">Hành trình Kỷ niệm</h1>
+                        <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mt-1">Nơi lưu giữ những khoảnh khắc</p>
+                    </div>
                 </div>
-                <div className="flex gap-2">
-                    <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setShowFilters(!showFilters)}
-                        className={`btn btn-circle btn-ghost ${showFilters ? 'bg-rose-500 text-white' : 'bg-rose-50 text-rose-500'} border-none shadow-sm`}
-                    >
-                        <Filter size={20} />
-                    </motion.button>
-                    <motion.button
-                        whileTap={{ rotate: 180 }}
-                        onClick={() => refetch()}
-                        className="btn btn-circle btn-ghost text-rose-500 bg-rose-50 border-none shadow-sm shadow-rose-100"
-                    >
-                        <RefreshCcw size={20} />
-                    </motion.button>
+
+                {/* Search & Filter */}
+                <div className="space-y-4">
+                    <div className="relative">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Tìm lại kỷ niệm xưa..."
+                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl font-bold text-gray-900 ring-1 ring-gray-100 focus:ring-2 focus:ring-rose-500/20 outline-none transition-all shadow-inner"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+                        {(['ALL', 'CHECKIN', 'KUDOS', 'PROMPT_ANSWER', 'REPAIR'] as const).map((t) => (
+                            <button
+                                key={t}
+                                onClick={() => setFilter(t)}
+                                className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest whitespace-nowrap transition-all ${filter === t ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
+                            >
+                                {t === 'ALL' ? 'Tất cả' : t === 'PROMPT_ANSWER' ? 'Love Map' : t}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Filter Panel */}
-            <AnimatePresence>
-                {showFilters && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                    >
-                        <div className="bg-gray-50 p-6 rounded-[2rem] space-y-6 border border-gray-100 shadow-inner">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Loại kỷ niệm</label>
-                                    <select
-                                        value={filterType}
-                                        onChange={(e) => setFilterType(e.target.value)}
-                                        className="select select-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700 focus:ring-2 focus:ring-rose-200"
-                                    >
-                                        <option value="">Tất cả</option>
-                                        <option value="CHECKIN">Mood Check-in</option>
-                                        <option value="KUDOS">Kudos (Jar of Wins)</option>
-                                        <option value="REPAIR">Repair (NVC)</option>
-                                        <option value="PROMPT_ANSWER">Love Map Answers</option>
-                                    </select>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Lọc từ ngày</label>
-                                    <input
-                                        type="date"
-                                        value={startDate}
-                                        onChange={(e) => setStartDate(e.target.value)}
-                                        className="input input-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700 focus:ring-2 focus:ring-rose-200"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Đến ngày</label>
-                                    <input
-                                        type="date"
-                                        value={endDate}
-                                        onChange={(e) => setEndDate(e.target.value)}
-                                        className="input input-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700 focus:ring-2 focus:ring-rose-200"
-                                    />
-                                </div>
-                                <div className="flex items-end">
-                                    {hasActiveFilters && (
-                                        <button
-                                            onClick={resetFilters}
-                                            className="btn btn-ghost w-full rounded-2xl text-rose-500 font-bold hover:bg-rose-50 gap-2 normal-case"
-                                        >
-                                            <X size={16} /> Xóa bộ lọc
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <div className="space-y-6">
+            <div className="p-6 space-y-6">
                 {isLoading ? (
-                    <div className="flex flex-col items-center justify-center p-20 space-y-4">
+                    <div className="flex flex-col items-center justify-center py-20 gap-4">
                         <span className="loading loading-spinner loading-lg text-rose-500"></span>
-                        <p className="text-gray-300 font-bold uppercase text-[10px] tracking-widest animate-pulse">Đang hồi tưởng...</p>
+                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest animate-pulse">Đang tìm lại ký ức...</p>
+                    </div>
+                ) : filteredMemories?.length === 0 ? (
+                    <div className="text-center py-20 bg-gray-50/50 rounded-[3rem] border-2 border-dashed border-gray-100">
+                        <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-gray-100">
+                            <Calendar size={40} className="text-gray-200" />
+                        </div>
+                        <h3 className="text-lg font-black text-gray-800">Chưa có kỷ niệm nào</h3>
+                        <p className="text-xs font-bold text-gray-400 mt-2 px-10">Hãy cùng nhau tạo thêm thật nhiều mảnh ghép tình yêu nhé! ❤️</p>
                     </div>
                 ) : (
-                    <AnimatePresence mode="popLayout">
-                        {feed?.length > 0 ? feed.map((item: any, idx: number) => (
-                            <MemoryItem key={item._id} item={item} idx={idx} />
-                        )) : (
-                            <div className="text-center py-20 bg-gray-50 rounded-[3rem] border border-dashed border-gray-200">
-                                <p className="text-gray-400 font-medium italic text-sm">
-                                    {hasActiveFilters ? 'Không tìm thấy kỷ niệm phù hợp 🔍' : 'Chưa có ký ức nào được lưu lại ✨'}
-                                </p>
-                                {hasActiveFilters && (
-                                    <button onClick={resetFilters} className="btn btn-link text-rose-500 normal-case no-underline font-black mt-2">
-                                        Xem lại tất cả
-                                    </button>
-                                )}
-                            </div>
-                        )}
-                    </AnimatePresence>
+                    <div className="space-y-8 relative">
+                        {/* Timeline Line */}
+                        <div className="absolute left-10 top-0 bottom-0 w-px bg-gradient-to-b from-rose-100 via-gray-100 to-transparent" />
+
+                        <AnimatePresence mode="popLayout">
+                            {filteredMemories?.map((item: any, idx: number) => (
+                                <MemoryItem key={item._id} item={item} idx={idx} />
+                            ))}
+                        </AnimatePresence>
+                    </div>
                 )}
             </div>
         </div>
@@ -151,6 +105,10 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
     const isRepair = item.itemType === 'REPAIR';
     const isPrompt = item.itemType === 'PROMPT_ANSWER';
     const isPrivate = item.visibility === 'PRIVATE';
+
+    const [showAllComments, setShowAllComments] = useState(false);
+    const visibleComments = showAllComments ? item.comments : item.comments?.slice(-3);
+    const hasMoreComments = item.comments?.length > 3;
 
     return (
         <motion.div
@@ -166,14 +124,22 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
 
             <div className="relative z-10 flex flex-col gap-6">
                 <div className="flex items-center gap-4">
-                    <div className="avatar placeholder">
-                        <div className={`w-12 rounded-2xl ${isKudos ? 'bg-amber-400' : isCheckin ? 'bg-emerald-400' : isPrompt ? 'bg-rose-400' : 'bg-rose-400'} text-white font-black shadow-lg`}>
-                            <span>{item.userId?.name?.[0] || item.fromUserId?.name?.[0] || 'U'}</span>
+                    <div className="avatar">
+                        <div className={`w-12 h-12 rounded-2xl ${isKudos ? 'bg-amber-400' : isCheckin ? 'bg-emerald-400' : isPrompt ? 'bg-rose-400' : 'bg-rose-400'} text-white font-black shadow-lg overflow-hidden flex items-center justify-center`}>
+                            {item.userId?.avatarUrl || item.fromUserId?.avatarUrl || item.initiatorUserId?.avatarUrl ? (
+                                <img
+                                    src={item.userId?.avatarUrl || item.fromUserId?.avatarUrl || item.initiatorUserId?.avatarUrl}
+                                    alt="avatar"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span>{(item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name)?.[0] || 'U'}</span>
+                            )}
                         </div>
                     </div>
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
-                            <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || 'Me'}</h3>
+                            <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Me'}</h3>
                             {isPrivate ? (
                                 <span className="p-1 bg-gray-100 rounded-md text-gray-400" title="Chỉ mình tôi"><Lock size={12} /></span>
                             ) : (
@@ -237,11 +203,51 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
                         <div className="space-y-4">
                             <div className="p-6 bg-white rounded-[2rem] border border-rose-100 shadow-sm relative">
                                 <p className="text-[10px] font-black text-rose-300 uppercase tracking-widest mb-2 italic">Chủ đề: {item.promptId?.text}</p>
-                                <p className="text-gray-800 font-bold italic leading-relaxed">"{item.text}"</p>
+                                <p className="text-gray-800 font-bold italic leading-relaxed">"{item.answerText}"</p>
                             </div>
                             <div className="flex items-center gap-2 text-rose-400 font-black text-[10px] tracking-widest uppercase ml-4">
                                 <Heart size={14} fill="currentColor" /> Love Map Answer
                             </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Comment Section */}
+                <div className="pt-6 border-t border-gray-100 space-y-4">
+                    {item.comments && item.comments.length > 0 && (
+                        <div className="space-y-3">
+                            {hasMoreComments && !showAllComments && (
+                                <button
+                                    onClick={() => setShowAllComments(true)}
+                                    className="text-[10px] font-black text-rose-400 uppercase tracking-widest ml-11 hover:text-rose-500 transition-colors"
+                                >
+                                    Xem thêm {item.comments.length - 3} phản hồi...
+                                </button>
+                            )}
+
+                            {visibleComments.map((c: any, i: number) => (
+                                <div key={i} className="flex gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                        {c.userId?.avatarUrl ? (
+                                            <img src={c.userId.avatarUrl} alt="c" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-[10px] font-black text-gray-400 uppercase">{c.userId?.name?.[0] || 'U'}</span>
+                                        )}
+                                    </div>
+                                    <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3 px-4 text-sm font-medium text-gray-700">
+                                        {c.content}
+                                    </div>
+                                </div>
+                            ))}
+
+                            {showAllComments && hasMoreComments && (
+                                <button
+                                    onClick={() => setShowAllComments(false)}
+                                    className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-11 hover:text-gray-500 transition-colors"
+                                >
+                                    Thu gọn
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>

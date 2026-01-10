@@ -17,7 +17,7 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res) => {
 // Update profile
 router.patch('/profile', authMiddleware, async (req: AuthRequest, res) => {
     try {
-        const { name, email, timezone, settings } = req.body;
+        const { name, email, timezone, settings, avatarUrl } = req.body;
         const user = await User.findById(req.user?.userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -28,6 +28,7 @@ router.patch('/profile', authMiddleware, async (req: AuthRequest, res) => {
             user.email = email;
         }
         if (timezone) user.timezone = timezone;
+        if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
         if (settings) user.settings = { ...user.settings, ...settings };
 
         await user.save();

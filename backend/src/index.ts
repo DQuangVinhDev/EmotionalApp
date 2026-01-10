@@ -17,6 +17,7 @@ import { seedPrompts } from './services/seed';
 
 import memoryRoutes from './routes/memory';
 import commentRoutes from './routes/comment';
+import locationRoutes from './routes/location';
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use('/feed', feedRoutes);
 app.use('/users', userRoutes);
 app.use('/memory', memoryRoutes);
 app.use('/comments', commentRoutes);
+app.use('/locations', locationRoutes);
 
 // Basic health check
 app.get('/ping', (req: any, res: any) => res.send('pong'));

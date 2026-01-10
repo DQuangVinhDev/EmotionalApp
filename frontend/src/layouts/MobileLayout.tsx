@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Home, MessageSquare, Heart, Settings } from 'lucide-react';
+import { Home, MessageSquare, Heart, Settings, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function MobileLayout() {
@@ -26,6 +26,12 @@ export default function MobileLayout() {
                             icon={<MessageSquare size={22} />}
                             label="Feed"
                             isActive={location.pathname === '/feed'}
+                        />
+                        <NavItem
+                            to="/map"
+                            icon={<MapPin size={22} />}
+                            label="Map"
+                            isActive={location.pathname === '/map'}
                         />
                         <NavItem
                             to="/ritual"

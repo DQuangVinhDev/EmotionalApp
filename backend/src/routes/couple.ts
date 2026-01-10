@@ -40,6 +40,12 @@ router.post('/create', authMiddleware, async (req: AuthRequest, res) => {
         });
         await couple.save();
 
+        // Assign default avatar to creator
+        const user = await User.findById(userId);
+        if (user) {
+            user.avatarUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdBWB76EZKUgHdARYa-XNyIzoiJiUiyKiFrg&s"
+        }
+
         const accessToken = jwt.sign(
             { userId: userId, coupleId: couple._id },
             process.env.JWT_SECRET || 'secret',
@@ -76,6 +82,13 @@ router.post('/join', authMiddleware, async (req: AuthRequest, res) => {
             couple.pairedAt = new Date();
         }
         await couple.save();
+
+        // Assign default avatar to joiner
+        const user = await User.findById(userId);
+        if (user) {
+            user.avatarUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvP0Bz1V4MCwCBtR2ldjM5nWZPO-XNmr5q1qGcBkSLXA&s";
+            await user.save();
+        }
 
         const accessToken = jwt.sign(
             { userId: userId, coupleId: couple._id },
