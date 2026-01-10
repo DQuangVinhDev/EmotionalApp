@@ -7,12 +7,14 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 
+import MoodEmoji from '../../components/MoodEmoji';
+
 const MOODS = [
-    { val: 1, label: 'Tệ', emoji: '😢' },
-    { val: 2, label: 'Kém', emoji: '😕' },
-    { val: 3, label: 'Ổn', emoji: '😐' },
-    { val: 4, label: 'Tốt', emoji: '🙂' },
-    { val: 5, label: 'Tuyệt', emoji: '😊' },
+    { val: 1, label: 'Tệ' },
+    { val: 2, label: 'Kém' },
+    { val: 3, label: 'Ổn' },
+    { val: 4, label: 'Tốt' },
+    { val: 5, label: 'Tuyệt' },
 ];
 
 export default function CheckInForm() {
@@ -76,7 +78,9 @@ export default function CheckInForm() {
                                 onClick={() => setMood(m.val)}
                                 className={`flex flex-col items-center gap-2 p-4 rounded-[2rem] transition-all border-2 ${mood === m.val ? 'bg-rose-50 border-rose-500 shadow-lg shadow-rose-100' : 'bg-gray-50 border-transparent text-gray-400'}`}
                             >
-                                <span className={`text-3xl transition-transform duration-300 ${mood === m.val ? 'scale-125 rotate-6' : ''}`}>{m.emoji}</span>
+                                <div className={`transition-transform duration-300 ${mood === m.val ? 'scale-125' : ''}`}>
+                                    <MoodEmoji mood={m.val} size="md" />
+                                </div>
                                 <span className={`text-[9px] font-black uppercase tracking-wider ${mood === m.val ? 'text-rose-500' : 'text-gray-300'}`}>{m.label}</span>
                             </motion.button>
                         ))}

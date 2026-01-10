@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Send, Filter, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import MoodEmoji from '../../components/MoodEmoji';
 
 export default function Feed() {
     const [filterType, setFilterType] = useState('');
@@ -224,7 +225,7 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                         <div className="space-y-6">
                             <div className="flex items-center justify-between bg-emerald-50/50 p-4 rounded-3xl border border-emerald-100/50">
                                 <div className="flex items-center gap-4">
-                                    <span className="text-4xl">{['😢', '😕', '😐', '🙂', '😊'][item.mood - 1]}</span>
+                                    <MoodEmoji mood={item.mood} size="lg" />
                                     <div>
                                         <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Tâm trạng</h4>
                                         <p className="text-sm font-bold text-gray-700">{['Tệ', 'Kém', 'Ổn', 'Tốt', 'Tuyệt'][item.mood - 1]}</p>
