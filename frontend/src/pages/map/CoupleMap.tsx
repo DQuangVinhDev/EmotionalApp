@@ -36,7 +36,7 @@ export default function CoupleMap() {
     const queryClient = useQueryClient();
 
     // Fetch locations
-    const { data: locations, isLoading } = useQuery({
+    const { data: locations } = useQuery({
         queryKey: ['locations'],
         queryFn: async () => {
             const res = await client.get('/locations');

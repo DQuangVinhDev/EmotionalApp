@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import client from '../../api/client';
-import { ChevronLeft, Calendar, Search, Filter, MessageCircle, Star, ShieldAlert, Sparkles, Heart, Lock, Globe, Quote } from 'lucide-react';
+import { ChevronLeft, Calendar, Search, MessageCircle, Star, ShieldAlert, Sparkles, Heart, Lock, Globe, Quote } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
