@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History } from 'lucide-react';
+import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History, Video } from 'lucide-react';
+import PrivateVideoCall from './video/PrivateVideoCall';
 import { useAuthStore } from '../store/useAuthStore';
 import { useQuery } from '@tanstack/react-query';
 import client from '../api/client';
@@ -126,6 +127,13 @@ export default function Home() {
                         icon={<CheckCircle size={24} />}
                         color="bg-emerald-500"
                         onClick={() => navigate('/checkin')}
+                    />
+                    <MainFeature
+                        title="Video Call riêng tư"
+                        desc="Mã hóa & Chống quay màn hình"
+                        icon={<Video size={24} />}
+                        color="bg-rose-500"
+                        onClick={() => window.dispatchEvent(new CustomEvent('open-video-call'))}
                     />
                     <div className="grid grid-cols-2 gap-4">
                         <SubFeature

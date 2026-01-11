@@ -1,35 +1,62 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-@theme {
-  --color-brand-50: #fff1f2;
-  --color-brand-100: #ffe4e6;
-  --color-brand-200: #fecdd3;
-  --color-brand-300: #fda4af;
-  --color-brand-400: #fb7185;
-  --color-brand-500: #f43f5e;
-  --color-brand-600: #e11d48;
-  --color-brand-700: #be123c;
-  --color-brand-800: #9f1239;
-  --color-brand-900: #881337;
-
-  --radius-4xl: 2rem;
-  --radius-5xl: 3rem;
-}
+/* --- PREMIUM MIDNIGHT DARK THEME --- */
 
 :root {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-brand-50: #fff1f2;
+  --color-brand-500: #f43f5e;
+  --color-brand-600: #e11d48;
+
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+/* Leaflet Dark Theme Overrides */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background-color: #0f172a !important;
+  /* Slate-900 */
+  color: #f8fafc !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+.leaflet-container {
+  background: #020617 !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(2, 6, 23, 0.5) !important;
+  color: #64748b !important;
+}
+
+.leaflet-control-attribution a {
+  color: #94a3b8 !important;
 }
 
 body {
-  @apply bg-base-200 text-base-content min-h-screen;
-  background-image: radial-gradient(at 0% 0%, hsla(353, 100%, 95%, 1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsla(339, 49%, 95%, 1) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339, 49%, 95%, 1) 0, transparent 50%);
+  background-color: #020617;
+  /* Deep Midnight */
+  color: #f8fafc;
+  min-height: 100vh;
+  margin: 0;
+  /* Cinematic ambient lighting */
+  background-image:
+    radial-gradient(at 0% 0%, #1e1b4b 0, transparent 50%),
+    radial-gradient(at 100% 100%, #4c0519 0, transparent 50%);
 }
 
 .mobile-view {
-  @apply bg-base-100 min-h-screen relative overflow-x-hidden transition-all duration-300;
+  background-color: #020617;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
 @media (min-width: 640px) {
@@ -38,43 +65,92 @@ body {
     margin: 2rem auto;
     min-height: calc(100vh - 4rem);
     border-radius: 3rem;
-    @apply shadow-2xl border border-white/20 ring-1 ring-black/5;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #020617;
   }
 }
 
+/* Glass UI Elements - Dark Modern Look */
 .glass-nav {
-  @apply bg-white/70 backdrop-blur-xl border-t border-white/20;
-}
-
-.btn-premium {
-  @apply btn btn-primary border-none shadow-lg transition-all duration-300;
+  background-color: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card-premium {
-  @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl shadow-black/5;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.3);
 }
 
-/* Custom scrollbar */
+/* Luxury DARK Button */
+.btn-luxury {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #ffffff;
+  font-weight: 800;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-luxury:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(244, 63, 94, 0.4);
+  filter: brightness(1.1);
+}
+
+.btn-luxury:active {
+  transform: scale(0.96);
+}
+
+/* Typography Overrides */
+h1,
+h2,
+h3 {
+  color: #ffffff;
+}
+
+.text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+.text-slate-950 {
+  color: #ffffff !important;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-rose-200 rounded-full;
+  background: #334155;
+  border-radius: 10px;
 }
 
-/* Fix for Leaflet Custom DivIcons */
-.custom-div-icon {
-  background: none !important;
-  border: none !important;
+/* Ensure DaisyUI doesn't force light colors */
+[data-theme] {
+  background-color: transparent !important;
+  color: inherit !important;
 }
 
-.leaflet-marker-icon {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+.bg-white {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+.border-gray-100 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
 }

@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/socket.io": "^3.0.1",
     "@types/web-push": "^3.6.4",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
@@ -23,6 +24,7 @@
     "mongoose": "^9.1.2",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.12",
+    "socket.io": "^4.8.3",
     "web-push": "^3.6.7",
     "zod": "^4.3.5"
   },

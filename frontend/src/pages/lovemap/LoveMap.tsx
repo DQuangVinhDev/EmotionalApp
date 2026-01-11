@@ -106,19 +106,19 @@ export default function LoveMap() {
     );
 
     return (
-        <div className="bg-white min-h-screen flex flex-col relative overflow-hidden">
+        <div className="bg-slate-950 min-h-screen flex flex-col relative overflow-hidden">
             {/* Background Decor */}
-            <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-rose-50 rounded-full blur-3xl opacity-60" />
-            <div className="absolute bottom-[-5%] left-[-5%] w-80 h-80 bg-rose-100/30 rounded-full blur-3xl opacity-60" />
+            <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-rose-500/10 rounded-full blur-[120px] opacity-40" />
+            <div className="absolute bottom-[-5%] left-[-5%] w-80 h-80 bg-rose-600/10 rounded-full blur-[120px] opacity-40" />
 
             {/* Header */}
-            <div className="p-6 flex items-center gap-4 sticky top-0 bg-white/80 backdrop-blur-xl z-50 border-b border-gray-50 flex-shrink-0">
-                <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors">
+            <div className="p-6 flex items-center gap-4 sticky top-0 bg-slate-950/80 backdrop-blur-xl z-50 border-b border-white/5 flex-shrink-0">
+                <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-white/5 text-white transition-colors">
                     <ChevronLeft size={24} />
                 </button>
                 <div className="flex-1">
-                    <h1 className="text-xl font-black text-gray-900 leading-none tracking-tight">Love Map</h1>
-                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mt-1 italic">Kết nối tâm hồn mỗi ngày</p>
+                    <h1 className="text-xl font-black text-white leading-none tracking-tight">Love Map</h1>
+                    <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mt-1 italic">Kết nối tâm hồn mỗi ngày</p>
                 </div>
             </div>
 
@@ -127,14 +127,14 @@ export default function LoveMap() {
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-indigo-50/50 p-6 rounded-[2.5rem] border border-indigo-100/50 flex gap-4 items-center"
+                    className="bg-white/5 p-6 rounded-[2.5rem] border border-white/5 flex gap-4 items-center"
                 >
-                    <div className="w-10 h-10 rounded-2xl bg-indigo-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-indigo-100">
+                    <div className="w-10 h-10 rounded-2xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-rose-500/20">
                         <Lightbulb size={20} />
                     </div>
                     <div>
-                        <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">Love Map Tip</p>
-                        <p className="text-xs font-bold text-gray-600 leading-relaxed italic">
+                        <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest mb-1">Love Map Tip</p>
+                        <p className="text-xs font-bold text-slate-400 leading-relaxed italic">
                             "{LOVE_TIPS[tipIndex]}"
                         </p>
                     </div>
@@ -145,15 +145,15 @@ export default function LoveMap() {
                     key={currentPrompt?._id}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="card-premium p-10 rounded-[3.5rem] bg-gradient-to-br from-rose-50 to-white border-rose-100 relative shadow-2xl shadow-rose-100/50"
+                    className="p-10 rounded-[3.5rem] bg-slate-900 border border-white/5 relative shadow-2xl"
                 >
-                    <div className="p-4 bg-white rounded-2xl text-rose-500 shadow-lg absolute -top-6 left-1/2 -translate-x-1/2 border border-rose-50">
-                        <Quote size={24} fill="currentColor" className="opacity-20" />
+                    <div className="p-4 bg-slate-800 rounded-2xl text-rose-500 shadow-lg absolute -top-6 left-1/2 -translate-x-1/2 border border-white/5">
+                        <Quote size={24} fill="currentColor" className="opacity-40" />
                     </div>
 
                     <button
                         onClick={() => shufflePrompt.mutate()}
-                        className="absolute top-6 right-8 p-3 rounded-2xl bg-white/50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                        className="absolute top-6 right-8 p-3 rounded-2xl bg-white/5 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm"
                         title="Đổi câu hỏi khác"
                     >
                         <RefreshCw size={18} className={shufflePrompt.isPending ? 'animate-spin' : ''} />
@@ -161,45 +161,45 @@ export default function LoveMap() {
 
                     <div className="text-center space-y-6 pt-4">
                         <div className="flex flex-wrap justify-center gap-2">
-                            <span className="badge badge-primary font-black text-[9px] tracking-widest uppercase py-3 px-4">Daily Topic</span>
+                            <span className="bg-rose-500 text-white font-black text-[9px] tracking-widest uppercase py-2 px-4 rounded-full">Daily Topic</span>
                             {currentPrompt?.tags?.map((tag: string) => (
-                                <span key={tag} className="badge bg-white text-rose-400 border-rose-100 font-bold text-[8px] uppercase tracking-tighter py-3 px-3">#{tag}</span>
+                                <span key={tag} className="bg-white/5 text-rose-400 border border-white/5 font-bold text-[8px] uppercase tracking-tighter py-2 px-3 rounded-full">#{tag}</span>
                             ))}
                         </div>
-                        <h2 className="text-2xl font-black text-gray-800 leading-tight italic">"{currentPrompt?.text}"</h2>
+                        <h2 className="text-2xl font-black text-white leading-tight italic">"{currentPrompt?.text}"</h2>
                     </div>
                 </motion.div>
 
                 {/* Input Section */}
                 <section className="space-y-4">
                     <div className="flex items-center gap-2 mb-2 ml-4">
-                        <Sparkles size={16} className="text-rose-400" />
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Suy nghĩ của bạn</span>
+                        <Sparkles size={16} className="text-rose-500" />
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Suy nghĩ của bạn</span>
                     </div>
                     <div className="relative">
                         <textarea
                             placeholder="Hãy chia sẻ thật tâm nhất..."
-                            className="textarea w-full h-56 p-8 bg-gray-50 border-none ring-1 ring-gray-100 rounded-[3rem] focus:ring-4 focus:ring-rose-500/10 focus:bg-white outline-none transition-all text-lg font-bold text-gray-900 resize-none shadow-inner"
+                            className="textarea w-full h-56 p-8 bg-white/5 border border-white/10 rounded-[3rem] focus:ring-4 focus:ring-rose-500/10 outline-none transition-all text-lg font-bold text-white resize-none shadow-inner placeholder:text-slate-700"
                             value={answer}
                             onChange={(e) => setAnswer(e.target.value)}
                         />
-                        <div className="absolute top-6 right-8 text-rose-200"><Heart size={20} fill="currentColor" /></div>
+                        <div className="absolute top-6 right-8 text-rose-500/20"><Heart size={20} fill="currentColor" /></div>
                     </div>
                 </section>
             </div>
 
             {/* Fixed Footer for Actions */}
-            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-8 bg-white/80 backdrop-blur-xl z-40 space-y-6">
-                <div className="bg-gray-100/50 p-2 rounded-[2rem] flex border border-gray-100 shadow-inner">
+            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-8 bg-slate-950/80 backdrop-blur-xl z-40 space-y-6">
+                <div className="bg-white/5 p-1.5 rounded-[2rem] flex border border-white/5 shadow-inner">
                     <button
                         onClick={() => setVisibility('PRIVATE')}
-                        className={`flex-1 py-3 rounded-[1.75rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${visibility === 'PRIVATE' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400 opacity-60'}`}
+                        className={`flex-1 py-3 rounded-[1.75rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${visibility === 'PRIVATE' ? 'bg-white/10 text-white shadow-lg' : 'text-slate-600'}`}
                     >
                         Bí mật
                     </button>
                     <button
                         onClick={() => setVisibility('SHARED_NOW')}
-                        className={`flex-1 py-3 rounded-[1.75rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${visibility === 'SHARED_NOW' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400 opacity-60'}`}
+                        className={`flex-1 py-3 rounded-[1.75rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${visibility === 'SHARED_NOW' ? 'bg-white text-white shadow-lg' : 'text-slate-600'}`}
                     >
                         Chia sẻ
                     </button>
@@ -208,7 +208,7 @@ export default function LoveMap() {
                 <button
                     onClick={() => submitAnswer.mutate()}
                     disabled={!answer || submitAnswer.isPending}
-                    className="w-full btn btn-primary btn-lg rounded-[2.25rem] bg-rose-500 hover:bg-rose-600 text-white border-none font-black shadow-2xl shadow-rose-200 normal-case flex items-center justify-center gap-3 active:scale-95 transition-all"
+                    className="w-full h-16 bg-rose-500 hover:brightness-110 text-white rounded-[2.25rem] font-black shadow-[0_20px_50px_rgba(244,63,94,0.3)] flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
                 >
                     {submitAnswer.isPending ? <span className="loading loading-spinner text-white"></span> : (
                         <><Send size={20} /> Gửi câu trả lời</>

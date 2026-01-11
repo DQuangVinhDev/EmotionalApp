@@ -29,11 +29,11 @@ export default function MemoryLane() {
     );
 
     return (
-        <div className="bg-white min-h-screen pb-32">
+        <div className="bg-[#020617] min-h-screen pb-32">
             <div className="p-6 pb-0 space-y-8">
                 <div className="flex flex-col gap-6 pt-4">
                     <div className="flex items-center gap-4">
-                        <button onClick={() => navigate(-1)} className="p-3 -ml-2 rounded-2xl bg-gray-50 text-slate-400 hover:bg-gray-100 transition-all shadow-sm">
+                        <button onClick={() => navigate(-1)} className="p-3 -ml-2 rounded-2xl bg-slate-800 text-slate-400 hover:bg-slate-700 transition-all shadow-sm border border-white/5">
                             <ChevronLeft size={24} />
                         </button>
                         <div className="flex-1">
@@ -41,7 +41,7 @@ export default function MemoryLane() {
                                 <div className="w-8 h-1 bg-rose-500 rounded-full" />
                                 <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Timeline</span>
                             </div>
-                            <h1 className="text-3xl font-black text-slate-950 tracking-tight">Hành trình Kỷ niệm</h1>
+                            <h1 className="text-3xl font-black text-white tracking-tight">Hành trình Kỷ niệm</h1>
                         </div>
                     </div>
                 </div>
@@ -49,11 +49,11 @@ export default function MemoryLane() {
                 {/* Search & Filter */}
                 <div className="space-y-4">
                     <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input
                             type="text"
                             placeholder="Tìm lại kỷ niệm xưa..."
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl font-bold text-gray-900 ring-1 ring-gray-100 focus:ring-2 focus:ring-rose-500/20 outline-none transition-all shadow-inner"
+                            className="w-full pl-12 pr-4 py-4 bg-slate-800/50 border-none rounded-2xl font-bold text-white ring-1 ring-white/5 focus:ring-2 focus:ring-rose-500/20 outline-none transition-all shadow-inner placeholder:text-slate-600"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -64,7 +64,7 @@ export default function MemoryLane() {
                             <button
                                 key={t}
                                 onClick={() => setFilter(t)}
-                                className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest whitespace-nowrap transition-all ${filter === t ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
+                                className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest whitespace-nowrap transition-all ${filter === t ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'bg-slate-800/50 text-slate-500 hover:bg-slate-800'}`}
                             >
                                 {t === 'ALL' ? 'Tất cả' : t === 'PROMPT_ANSWER' ? 'Love Map' : t}
                             </button>
@@ -80,17 +80,17 @@ export default function MemoryLane() {
                         <p className="text-xs font-black text-gray-400 uppercase tracking-widest animate-pulse">Đang tìm lại ký ức...</p>
                     </div>
                 ) : filteredMemories?.length === 0 ? (
-                    <div className="text-center py-20 bg-gray-50/50 rounded-[3rem] border-2 border-dashed border-gray-100">
-                        <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-gray-100">
-                            <Calendar size={40} className="text-gray-200" />
+                    <div className="text-center py-20 bg-slate-900/40 rounded-[3rem] border-2 border-dashed border-white/5">
+                        <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-black/20">
+                            <Calendar size={40} className="text-slate-700" />
                         </div>
-                        <h3 className="text-lg font-black text-gray-800">Chưa có kỷ niệm nào</h3>
-                        <p className="text-xs font-bold text-gray-400 mt-2 px-10">Hãy cùng nhau tạo thêm thật nhiều mảnh ghép tình yêu nhé! ❤️</p>
+                        <h3 className="text-lg font-black text-slate-200">Chưa có kỷ niệm nào</h3>
+                        <p className="text-xs font-bold text-slate-500 mt-2 px-10">Hãy cùng nhau tạo thêm thật nhiều mảnh ghép tình yêu nhé! ❤️</p>
                     </div>
                 ) : (
                     <div className="space-y-8 relative">
                         {/* Timeline Line */}
-                        <div className="absolute left-10 top-0 bottom-0 w-px bg-gradient-to-b from-rose-100 via-gray-100 to-transparent" />
+                        <div className="absolute left-10 top-0 bottom-0 w-px bg-gradient-to-b from-rose-500/20 via-slate-800 to-transparent" />
 
                         <AnimatePresence mode="popLayout">
                             {filteredMemories?.map((item: any, idx: number) => (
@@ -120,7 +120,7 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: idx * 0.05 }}
-            className={`relative p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-black/5 overflow-hidden group transition-all duration-300 ${isKudos ? 'bg-amber-50/50' : isPrompt ? 'bg-rose-50/50' : 'bg-white'}`}
+            className={`relative p-8 rounded-[2.5rem] border border-white/5 shadow-2xl shadow-black/20 overflow-hidden group transition-all duration-300 ${isKudos ? 'bg-amber-500/10' : isPrompt ? 'bg-rose-500/10' : 'bg-slate-900/40'}`}
         >
             {/* Decorative background element */}
             <div className={`absolute -top-4 -right-4 transition-transform group-hover:scale-125 duration-700 opacity-5 ${isKudos ? 'text-amber-500' : isCheckin ? 'text-emerald-500' : isPrompt ? 'text-rose-500' : 'text-rose-500'}`}>
@@ -144,15 +144,15 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
                     </div>
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
-                            <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Me'}</h3>
+                            <h3 className="font-black text-white text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Me'}</h3>
                             {isPrivate ? (
-                                <span className="p-1 bg-gray-100 rounded-md text-gray-400" title="Chỉ mình tôi"><Lock size={12} /></span>
+                                <span className="p-1 bg-slate-800 rounded-md text-slate-500" title="Chỉ mình tôi"><Lock size={12} /></span>
                             ) : (
-                                <span className="p-1 bg-rose-50 rounded-md text-rose-400" title="Chia sẻ chung"><Globe size={12} /></span>
+                                <span className="p-1 bg-rose-500/10 rounded-md text-rose-500" title="Chia sẻ chung"><Globe size={12} /></span>
                             )}
                         </div>
-                        <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
-                            <span className="w-1 h-1 bg-gray-300 rounded-full" /> {item.itemType} • {new Date(item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric', year: 'numeric' })}
+                        <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
+                            <span className="w-1 h-1 bg-slate-700 rounded-full" /> {item.itemType} • {new Date(item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric', year: 'numeric' })}
                         </p>
                     </div>
                 </div>
@@ -160,8 +160,8 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
                 <div className="text-gray-700 leading-relaxed relative">
                     {isKudos && (
                         <div className="space-y-4">
-                            <div className="text-amber-600"><Quote size={32} fill="currentColor" className="opacity-10" /></div>
-                            <p className="text-xl font-black text-gray-800 italic pr-8 -mt-4 leading-snug">"{item.text}"</p>
+                            <div className="text-amber-500/20"><Quote size={32} fill="currentColor" /></div>
+                            <p className="text-xl font-black text-amber-50 italic pr-8 -mt-4 leading-snug">"{item.text}"</p>
                             <div className="flex items-center gap-2 text-amber-500 font-black text-[10px] tracking-widest uppercase">
                                 <Star size={14} fill="currentColor" /> Jar of Wins
                             </div>
@@ -170,28 +170,28 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
 
                     {isCheckin && (
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between bg-emerald-50/50 p-4 rounded-3xl border border-emerald-100/50">
+                            <div className="flex items-center justify-between bg-emerald-500/10 p-4 rounded-3xl border border-emerald-500/10">
                                 <div className="flex items-center gap-4">
                                     <MoodEmoji mood={item.mood} size="lg" />
                                     <div>
-                                        <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Tâm trạng</h4>
-                                        <p className="text-sm font-bold text-gray-700">{['Tệ', 'Kém', 'Ổn', 'Tốt', 'Tuyệt'][item.mood - 1]}</p>
+                                        <h4 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Tâm trạng</h4>
+                                        <p className="text-sm font-bold text-emerald-50">{['Tệ', 'Kém', 'Ổn', 'Tốt', 'Tuyệt'][item.mood - 1]}</p>
                                     </div>
                                 </div>
-                                <div className="w-px h-8 bg-emerald-100" />
+                                <div className="w-px h-8 bg-emerald-500/20" />
                                 <div className="text-center px-4">
-                                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest leading-none mb-1">E/S</p>
-                                    <p className="text-sm font-black text-gray-700">{item.energy}/{item.stress}</p>
+                                    <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1">E/S</p>
+                                    <p className="text-sm font-black text-emerald-50">{item.energy}/{item.stress}</p>
                                 </div>
                             </div>
                             {item.gratitudeText && (
                                 <div className="relative pl-6">
-                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-200 rounded-full" />
-                                    <p className="text-sm font-bold text-gray-500 italic leading-relaxed pr-4">"{item.gratitudeText}"</p>
+                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-500/30 rounded-full" />
+                                    <p className="text-sm font-bold text-slate-300 italic leading-relaxed pr-4">"{item.gratitudeText}"</p>
                                 </div>
                             )}
                             {item.need && (
-                                <div className="flex items-center gap-2 bg-indigo-50/50 p-3 rounded-2xl border border-indigo-100/50">
+                                <div className="flex items-center gap-2 bg-indigo-500/10 p-3 rounded-2xl border border-indigo-500/10">
                                     <span className="text-lg">
                                         {item.need === 'LISTEN' && '👂'}
                                         {item.need === 'HUG' && '🫂'}
@@ -200,7 +200,7 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
                                         {item.need === 'PLAY' && '🎮'}
                                         {item.need === 'CLARITY' && '💡'}
                                     </span>
-                                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">
                                         Đang cần: {
                                             item.need === 'LISTEN' ? 'Lắng nghe' :
                                                 item.need === 'HUG' ? 'Cái ôm' :
@@ -217,10 +217,10 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
 
                     {isRepair && (
                         <div className="space-y-4">
-                            <p className="bg-indigo-50 p-6 rounded-[2rem] text-indigo-700 italic border border-indigo-100 font-bold leading-snug shadow-inner">
+                            <p className="bg-indigo-500/10 p-6 rounded-[2rem] text-indigo-200 italic border border-indigo-500/10 font-bold leading-snug shadow-inner">
                                 "{item.generatedMessage}"
                             </p>
-                            <div className="flex items-center gap-2 text-indigo-400 font-black text-[10px] tracking-widest uppercase ml-4">
+                            <div className="flex items-center gap-2 text-indigo-500/50 font-black text-[10px] tracking-widest uppercase ml-4">
                                 <ShieldAlert size={14} /> NVC Framework
                             </div>
                         </div>
@@ -228,11 +228,11 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
 
                     {isPrompt && (
                         <div className="space-y-4">
-                            <div className="p-6 bg-white rounded-[2rem] border border-rose-100 shadow-sm relative">
-                                <p className="text-[10px] font-black text-rose-300 uppercase tracking-widest mb-2 italic">Chủ đề: {item.promptId?.text}</p>
-                                <p className="text-gray-800 font-bold italic leading-relaxed">"{item.answerText}"</p>
+                            <div className="p-6 bg-slate-900/60 rounded-[2rem] border border-rose-500/10 shadow-sm relative">
+                                <p className="text-[10px] font-black text-rose-500/40 uppercase tracking-widest mb-2 italic">Chủ đề: {item.promptId?.text}</p>
+                                <p className="text-slate-100 font-bold italic leading-relaxed">"{item.answerText}"</p>
                             </div>
-                            <div className="flex items-center gap-2 text-rose-400 font-black text-[10px] tracking-widest uppercase ml-4">
+                            <div className="flex items-center gap-2 text-rose-500/60 font-black text-[10px] tracking-widest uppercase ml-4">
                                 <Heart size={14} fill="currentColor" /> Love Map Answer
                             </div>
                         </div>
@@ -240,13 +240,13 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
                 </div>
 
                 {/* Comment Section */}
-                <div className="pt-6 border-t border-gray-100 space-y-4">
+                <div className="pt-6 border-t border-white/5 space-y-4">
                     {item.comments && item.comments.length > 0 && (
                         <div className="space-y-3">
                             {hasMoreComments && !showAllComments && (
                                 <button
                                     onClick={() => setShowAllComments(true)}
-                                    className="text-[10px] font-black text-rose-400 uppercase tracking-widest ml-11 hover:text-rose-500 transition-colors"
+                                    className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest ml-11 hover:text-rose-500 transition-colors"
                                 >
                                     Xem thêm {item.comments.length - 3} phản hồi...
                                 </button>
@@ -254,14 +254,14 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
 
                             {visibleComments.map((c: any, i: number) => (
                                 <div key={i} className="flex gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden shrink-0 shadow-sm border border-white/5">
                                         {c.userId?.avatarUrl ? (
                                             <img src={c.userId.avatarUrl} alt="c" className="w-full h-full object-cover" />
                                         ) : (
-                                            <span className="text-[10px] font-black text-gray-400 uppercase">{c.userId?.name?.[0] || 'U'}</span>
+                                            <span className="text-[10px] font-black text-slate-500 uppercase">{c.userId?.name?.[0] || 'U'}</span>
                                         )}
                                     </div>
-                                    <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3 px-4 text-sm font-medium text-gray-700">
+                                    <div className="bg-slate-800/50 rounded-2xl rounded-tl-none p-3 px-4 text-sm font-medium text-slate-300">
                                         {c.content}
                                     </div>
                                 </div>

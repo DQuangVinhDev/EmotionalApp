@@ -47,37 +47,37 @@ export default function Settings() {
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="card-premium p-8 rounded-[3.5rem] flex flex-col items-center bg-gradient-to-br from-rose-50 to-white relative overflow-hidden"
+                className="card-premium p-8 rounded-[3.5rem] flex flex-col items-center bg-gradient-to-br from-slate-900 to-slate-950 relative overflow-hidden"
             >
-                <div className="absolute -top-10 -right-10 text-rose-100/50 -rotate-12"><Crown size={120} /></div>
+                <div className="absolute -top-10 -right-10 text-white/5 -rotate-12"><Crown size={120} /></div>
 
                 <div className="relative mb-6">
-                    <div className="w-24 h-24 bg-rose-500 rounded-[2.5rem] flex items-center justify-center text-4xl text-white font-black shadow-2xl shadow-rose-200 rotate-3 overflow-hidden">
+                    <div className="w-24 h-24 bg-rose-500 rounded-[2.5rem] flex items-center justify-center text-4xl text-white font-black shadow-[0_20px_50px_rgba(244,63,94,0.3)] rotate-3 overflow-hidden border-4 border-white/10">
                         {profile?.avatarUrl ? (
                             <img src={profile.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
                         ) : (
                             profile?.name?.[0].toUpperCase() || '?'
                         )}
                     </div>
-                    <div className="absolute -bottom-2 -right-2 p-2 bg-white rounded-xl shadow-lg border border-rose-50 text-rose-500">
+                    <div className="absolute -bottom-2 -right-2 p-2.5 bg-rose-500 rounded-xl shadow-lg border-2 border-slate-900 text-white">
                         <Heart size={16} fill="currentColor" />
                     </div>
                 </div>
 
                 <div className="text-center space-y-1">
-                    <h1 className="text-2xl font-black text-gray-900 tracking-tight leading-none">{profile?.name}</h1>
-                    <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">{profile?.email}</p>
+                    <h1 className="text-2xl font-black text-white tracking-tight leading-none">{profile?.name}</h1>
+                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">{profile?.email}</p>
                 </div>
 
                 <div className="mt-8 flex gap-3">
-                    <div className="badge badge-outline border-rose-200 text-rose-500 font-bold px-4 py-3 bg-white">Couple Member</div>
-                    {profile?.coupleId && <div className="badge badge-primary font-bold px-4 py-3">Paired</div>}
+                    <div className="px-4 py-2 rounded-full border border-white/10 text-slate-300 font-bold text-[10px] uppercase tracking-wider bg-white/5">Couple Member</div>
+                    {profile?.coupleId && <div className="px-4 py-2 rounded-full bg-rose-500 text-white font-bold text-[10px] uppercase tracking-wider shadow-lg shadow-rose-500/20">Paired</div>}
                 </div>
             </motion.div>
 
             {/* Settings Menu */}
             <div className="space-y-6">
-                <h2 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] pl-4">Cài đặt ứng dụng</h2>
+                <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] pl-4">Cài đặt ứng dụng</h2>
 
                 <div className="card-premium rounded-[3rem] overflow-hidden p-2">
                     <SettingItem icon={<User size={18} />} title="Hồ sơ cá nhân" color="bg-blue-500" onClick={() => setEditingType('PROFILE')} />
@@ -102,9 +102,9 @@ export default function Settings() {
             <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={handleLogout}
-                className="w-full btn btn-lg bg-rose-50 border-none hover:bg-rose-100 text-rose-500 rounded-[2.5rem] font-bold normal-case flex items-center justify-center gap-4 transition-all"
+                className="w-full p-6 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-rose-500 rounded-[2.5rem] font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-4 transition-all"
             >
-                <div className="p-2 bg-white rounded-xl shadow-sm text-rose-400">
+                <div className="p-2 bg-rose-500 rounded-xl shadow-lg shadow-rose-500/20 text-white">
                     <LogOut size={20} />
                 </div>
                 Đăng xuất tài khoản
@@ -121,13 +121,13 @@ function SettingItem({ icon, title, color, onClick }: any) {
     return (
         <button
             onClick={onClick}
-            className="w-full flex items-center gap-5 p-5 rounded-[2.5rem] hover:bg-gray-50/50 transition-all group group-active:scale-95 duration-200"
+            className="w-full flex items-center gap-5 p-5 rounded-[2.2rem] hover:bg-white/5 transition-all group group-active:scale-95 duration-200"
         >
-            <div className={`p-3 rounded-2xl text-white ${color} shadow-lg shadow-current/10 group-hover:scale-110 transition-transform`}>
+            <div className={`p-3 rounded-2xl text-white ${color} shadow-lg shadow-current/20 group-hover:scale-110 transition-transform`}>
                 {icon}
             </div>
-            <span className="flex-1 text-left font-black text-gray-700 text-sm tracking-tight">{title}</span>
-            <div className="p-2 rounded-xl bg-gray-50 group-hover:bg-rose-50 group-hover:text-rose-400 transition-all text-gray-300">
+            <span className="flex-1 text-left font-black text-slate-200 text-sm tracking-tight">{title}</span>
+            <div className="p-2 rounded-xl bg-white/5 group-hover:bg-rose-500/20 group-hover:text-rose-400 transition-all text-slate-600">
                 <ChevronRight size={16} strokeWidth={3} />
             </div>
         </button>
@@ -262,45 +262,45 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="bg-white w-full max-w-[430px] rounded-[3.5rem] p-8 space-y-8"
+                className="bg-slate-900 w-full max-w-[430px] rounded-t-[3.5rem] rounded-b-[3.5rem] p-8 space-y-8 border border-white/10"
                 onClick={e => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center">
-                    <h3 className="text-xl font-black text-gray-900 tracking-tight">
+                    <h3 className="text-xl font-black text-white tracking-tight">
                         {type === 'PROFILE' ? 'Hồ sơ cá nhân' : type === 'NOTIFICATIONS' ? 'Cài đặt thông báo' : 'Quyền riêng tư'}
                     </h3>
-                    <button onClick={onClose} className="p-2 bg-gray-50 rounded-full text-gray-400"><X size={20} /></button>
+                    <button onClick={onClose} className="p-2 bg-white/5 rounded-full text-slate-400 hover:bg-white/10 transition-all"><X size={20} /></button>
                 </div>
 
                 <div className="space-y-6">
                     {type === 'PROFILE' && (
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Họ và tên</label>
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Họ và tên</label>
                                 <input
                                     type="text"
-                                    className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold text-gray-900"
+                                    className="input w-full bg-white/5 border-none ring-1 ring-white/10 rounded-2xl font-bold text-white focus:ring-rose-500/50 transition-all"
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label>
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email</label>
                                 <input
                                     type="email"
-                                    className="input w-full bg-gray-50 border-none ring-1 ring-gray-100 rounded-2xl font-bold text-gray-900"
+                                    className="input w-full bg-white/5 border-none ring-1 ring-white/10 rounded-2xl font-bold text-white focus:ring-rose-500/50 transition-all"
                                     value={formData.email}
                                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Ảnh đại diện</label>
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Ảnh đại diện</label>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-2xl bg-gray-50 ring-1 ring-gray-100 overflow-hidden flex items-center justify-center shrink-0">
+                                    <div className="w-16 h-16 rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden flex items-center justify-center shrink-0">
                                         {formData.avatarUrl ? (
                                             <img src={formData.avatarUrl} alt="preview" className="w-full h-full object-cover" />
                                         ) : (
-                                            <ImageIcon size={24} className="text-gray-200" />
+                                            <ImageIcon size={24} className="text-slate-700" />
                                         )}
                                     </div>
                                     <button
@@ -350,7 +350,7 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                                             );
                                             widget.open();
                                         }}
-                                        className="flex-1 bg-rose-50 text-rose-500 hover:bg-rose-100 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-rose-100"
+                                        className="flex-1 bg-white/5 text-rose-500 hover:bg-rose-500/10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-white/10"
                                     >
                                         {formData.avatarUrl ? 'Thay đổi ảnh' : 'Chọn ảnh đại diện'}
                                     </button>
@@ -361,27 +361,27 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
 
                     {type === 'NOTIFICATIONS' && (
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between p-6 bg-orange-50/50 rounded-3xl border border-orange-100/50 transition-all">
+                            <div className="flex items-center justify-between p-6 bg-white/5 rounded-3xl border border-white/10 transition-all">
                                 <div className="space-y-1">
-                                    <p className="font-black text-slate-800 text-sm">Thông báo qua Email</p>
+                                    <p className="font-black text-white text-sm">Thông báo qua Email</p>
                                     <p className="text-[10px] text-slate-400 font-bold leading-tight">Nhận email khi đối phương tương tác</p>
                                 </div>
                                 <input
                                     type="checkbox"
-                                    className="toggle toggle-warning toggle-lg"
+                                    className="toggle toggle-rose toggle-lg"
                                     checked={formData.emailNotifications}
                                     onChange={e => setFormData({ ...formData, emailNotifications: e.target.checked })}
                                 />
                             </div>
 
-                            <div className="flex flex-col p-6 bg-rose-50/50 rounded-3xl border border-rose-100/50 space-y-4">
+                            <div className="flex flex-col p-6 bg-rose-500/5 rounded-3xl border border-rose-500/10 space-y-4">
                                 <div className="space-y-1">
-                                    <p className="font-black text-slate-800 text-sm">Thông báo trên điện thoại</p>
-                                    <p className="text-[10px] text-slate-400 font-bold leading-tight uppercase tracking-wider">Web Push Notifications</p>
+                                    <p className="font-black text-white text-sm">Thông báo trên điện thoại</p>
+                                    <p className="text-[10px] text-rose-400/80 font-bold leading-tight uppercase tracking-wider">Web Push Notifications</p>
                                 </div>
                                 <button
                                     onClick={subscribeToPush}
-                                    className="w-full py-4 bg-white text-rose-500 rounded-2xl font-black text-xs uppercase tracking-widest border border-rose-100 shadow-sm hover:shadow-md transition-all active:scale-95"
+                                    className="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-[0_10px_25px_rgba(244,63,94,0.3)] hover:brightness-110 transition-all active:scale-95"
                                 >
                                     Bật thông báo trên máy này
                                 </button>
@@ -391,9 +391,9 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                     )}
 
                     {type === 'PRIVACY' && (
-                        <div className="p-6 bg-rose-50 rounded-3xl space-y-2">
-                            <p className="font-bold text-rose-600 text-sm">Mã hóa đầu cuối 🔒</p>
-                            <p className="text-xs text-rose-500/80 leading-relaxed font-medium">Tất cả dữ liệu tin nhắn và check-in của bạn đều được bảo mật tuyệt đối giữa hai người.</p>
+                        <div className="p-6 bg-rose-500/10 border border-rose-500/20 rounded-3xl space-y-2">
+                            <p className="font-bold text-rose-400 text-sm">Mã hóa đầu cuối 🔒</p>
+                            <p className="text-xs text-slate-400 leading-relaxed font-medium">Tất cả dữ liệu tin nhắn và check-in của bạn đều được bảo mật tuyệt đối giữa hai người.</p>
                         </div>
                     )}
                 </div>
@@ -403,7 +403,7 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                         <button
                             onClick={handleSave}
                             disabled={isPending}
-                            className="w-full btn btn-primary btn-lg rounded-[2rem] border-none font-black shadow-xl shadow-rose-200 gap-2"
+                            className="w-full py-5 bg-rose-500 text-white rounded-[2rem] font-black shadow-xl shadow-rose-500/20 flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all"
                         >
                             {isPending ? <span className="loading loading-spinner"></span> : <><Save size={20} /> Lưu thay đổi</>}
                         </button>

@@ -18,6 +18,23 @@ import Settings from './pages/settings/Settings';
 import LoveMap from './pages/lovemap/LoveMap';
 import MemoryLane from './pages/memory/MemoryLane';
 import CoupleMap from './pages/map/CoupleMap';
+import PrivateVideoCall from './pages/video/PrivateVideoCall';
+import { useState, useEffect } from 'react';
+
+function PrivateVideoCallWrapper() {
+    const { isAuthenticated, user } = useAuthStore();
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        const handleOpenCall = () => setIsOpen(true);
+        window.addEventListener('open-video-call', handleOpenCall);
+        return () => window.removeEventListener('open-video-call', handleOpenCall);
+    }, []);
+
+    if (!isAuthenticated || !user?.coupleId) return null;
+
+    return <PrivateVideoCall isOpen={isOpen} onClose={() => setIsOpen(false)} />;
+}
 
 const queryClient = new QueryClient();
 
@@ -32,6 +49,7 @@ export default function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <Toaster position="top-center" richColors />
+            <PrivateVideoCallWrapper />
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<Login />} />

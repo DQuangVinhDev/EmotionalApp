@@ -44,21 +44,21 @@ export default function Feed() {
                 </div>
                 <div className="flex justify-between items-end">
                     <div>
-                        <h1 className="text-4xl font-black text-slate-950 tracking-tight leading-none">Journal chung</h1>
-                        <p className="text-sm font-bold text-slate-500 mt-3 italic">Khoảnh khắc gắn kết của hai bạn</p>
+                        <h1 className="text-4xl font-black text-white tracking-tight leading-none">Journal chung</h1>
+                        <p className="text-sm font-bold text-slate-400 mt-3 italic">Khoảnh khắc gắn kết của hai bạn</p>
                     </div>
                     <div className="flex gap-2">
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={() => setShowFilters(!showFilters)}
-                            className={`btn btn-circle btn-ghost ${showFilters ? 'bg-rose-500 text-white' : 'bg-white text-rose-500'} border-none shadow-md`}
+                            className={`btn btn-circle btn-ghost ${showFilters ? 'bg-rose-500 text-white' : 'bg-slate-800 text-rose-500'} border-none shadow-md`}
                         >
                             <Filter size={20} />
                         </motion.button>
                         <motion.button
                             whileTap={{ rotate: 180 }}
                             onClick={() => refetch()}
-                            className="btn btn-circle btn-ghost text-rose-500 bg-white border-none shadow-md"
+                            className="btn btn-circle btn-ghost text-rose-500 bg-slate-800 border-none shadow-md"
                         >
                             <RefreshCcw size={20} />
                         </motion.button>
@@ -75,14 +75,14 @@ export default function Feed() {
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden"
                     >
-                        <div className="bg-gray-50 p-6 rounded-[2rem] space-y-6 border border-gray-100 shadow-inner">
+                        <div className="bg-slate-900/50 p-6 rounded-[2rem] space-y-6 border border-white/5 shadow-inner">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Loại bài viết</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Loại bài viết</label>
                                     <select
                                         value={filterType}
                                         onChange={(e) => setFilterType(e.target.value)}
-                                        className="select select-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700"
+                                        className="select select-bordered w-full rounded-2xl bg-slate-800 border-none shadow-sm text-sm font-bold text-slate-200"
                                     >
                                         <option value="">Tất cả</option>
                                         <option value="CHECKIN">Mood Check-in</option>
@@ -92,21 +92,21 @@ export default function Feed() {
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Từ ngày</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Từ ngày</label>
                                     <input
                                         type="date"
                                         value={startDate}
                                         onChange={(e) => setStartDate(e.target.value)}
-                                        className="input input-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700"
+                                        className="input input-bordered w-full rounded-2xl bg-slate-800 border-none shadow-sm text-sm font-bold text-slate-200"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Đến ngày</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Đến ngày</label>
                                     <input
                                         type="date"
                                         value={endDate}
                                         onChange={(e) => setEndDate(e.target.value)}
-                                        className="input input-bordered w-full rounded-2xl bg-white border-none shadow-sm text-sm font-bold text-gray-700"
+                                        className="input input-bordered w-full rounded-2xl bg-slate-800 border-none shadow-sm text-sm font-bold text-slate-200"
                                     />
                                 </div>
                                 <div className="flex items-end">
@@ -136,8 +136,8 @@ export default function Feed() {
                         {feed?.length > 0 ? feed.map((item: any, idx: number) => (
                             <FeedItem key={item._id} item={item} idx={idx} />
                         )) : (
-                            <div className="text-center py-20 bg-gray-50 rounded-[3rem] border border-dashed border-gray-200">
-                                <p className="text-gray-400 font-medium italic text-sm">
+                            <div className="text-center py-20 bg-slate-900/30 rounded-[3rem] border border-dashed border-white/10">
+                                <p className="text-slate-500 font-medium italic text-sm">
                                     {hasActiveFilters ? 'Không thấy bài viết nào phù hợp 🔍' : 'Chưa có gì được chia sẻ hôm nay ✨'}
                                 </p>
                                 {hasActiveFilters && (
@@ -186,7 +186,7 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: idx * 0.05 }}
-            className={`relative p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-black/5 overflow-hidden group transition-all duration-300 ${isKudos ? 'bg-amber-50/50' : isPrompt ? 'bg-rose-50/50' : 'bg-white'}`}
+            className={`relative p-8 rounded-[2.5rem] border border-white/5 shadow-2xl shadow-black/20 overflow-hidden group transition-all duration-300 ${isKudos ? 'bg-amber-500/10' : isPrompt ? 'bg-rose-500/10' : 'bg-slate-900/40'}`}
         >
             {/* Decorative background element */}
             <div className={`absolute -top-4 -right-4 transition-transform group-hover:scale-125 duration-700 opacity-5 ${isKudos ? 'text-amber-500' : isCheckin ? 'text-emerald-500' : isPrompt ? 'text-rose-500' : 'text-rose-500'}`}>
@@ -209,9 +209,9 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                         </div>
                     </div>
                     <div className="flex-1">
-                        <h3 className="font-black text-slate-900 text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Partner'}</h3>
+                        <h3 className="font-black text-white text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Partner'}</h3>
                         <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
-                            <span className="w-1 h-1 bg-slate-300 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' })}
+                            <span className="w-1 h-1 bg-slate-700 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' })}
                         </p>
                     </div>
                 </div>
@@ -219,8 +219,8 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                 <div className="text-gray-700 leading-relaxed relative">
                     {isKudos && (
                         <div className="space-y-4">
-                            <div className="text-amber-600"><Quote size={32} fill="currentColor" className="opacity-10" /></div>
-                            <p className="text-xl font-black text-gray-800 italic pr-8 -mt-4 leading-snug">"{item.text}"</p>
+                            <div className="text-amber-500/20"><Quote size={32} fill="currentColor" /></div>
+                            <p className="text-xl font-black text-amber-50 italic pr-8 -mt-4 leading-snug">"{item.text}"</p>
                             <div className="flex items-center gap-2 text-amber-500 font-black text-[10px] tracking-widest uppercase">
                                 <Star size={14} fill="currentColor" /> Jar of Wins
                             </div>
@@ -229,28 +229,28 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
 
                     {isCheckin && (
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between bg-emerald-50/50 p-4 rounded-3xl border border-emerald-100/50">
+                            <div className="flex items-center justify-between bg-emerald-500/10 p-4 rounded-3xl border border-emerald-500/10">
                                 <div className="flex items-center gap-4">
                                     <MoodEmoji mood={item.mood} size="lg" />
                                     <div>
-                                        <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Tâm trạng</h4>
-                                        <p className="text-sm font-bold text-gray-700">{['Tệ', 'Kém', 'Ổn', 'Tốt', 'Tuyệt'][item.mood - 1]}</p>
+                                        <h4 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Tâm trạng</h4>
+                                        <p className="text-sm font-bold text-emerald-50">{['Tệ', 'Kém', 'Ổn', 'Tốt', 'Tuyệt'][item.mood - 1]}</p>
                                     </div>
                                 </div>
-                                <div className="w-px h-8 bg-emerald-100" />
+                                <div className="w-px h-8 bg-emerald-500/20" />
                                 <div className="text-center px-4">
-                                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest leading-none mb-1">E/S</p>
-                                    <p className="text-sm font-black text-gray-700">{item.energy}/{item.stress}</p>
+                                    <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1">E/S</p>
+                                    <p className="text-sm font-black text-emerald-50">{item.energy}/{item.stress}</p>
                                 </div>
                             </div>
                             {item.gratitudeText && (
                                 <div className="relative pl-6">
-                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-200 rounded-full" />
-                                    <p className="text-sm font-bold text-slate-600 italic leading-relaxed pr-4">"{item.gratitudeText}"</p>
+                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-500/30 rounded-full" />
+                                    <p className="text-sm font-bold text-slate-300 italic leading-relaxed pr-4">"{item.gratitudeText}"</p>
                                 </div>
                             )}
                             {item.need && (
-                                <div className="flex items-center gap-2 bg-indigo-50/50 p-3 rounded-2xl border border-indigo-100/50">
+                                <div className="flex items-center gap-2 bg-indigo-500/10 p-3 rounded-2xl border border-indigo-500/10">
                                     <span className="text-lg">
                                         {item.need === 'LISTEN' && '👂'}
                                         {item.need === 'HUG' && '🫂'}
@@ -259,7 +259,7 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                                         {item.need === 'PLAY' && '🎮'}
                                         {item.need === 'CLARITY' && '💡'}
                                     </span>
-                                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                                    <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">
                                         Đang cần: {
                                             item.need === 'LISTEN' ? 'Lắng nghe' :
                                                 item.need === 'HUG' ? 'Cái ôm' :
@@ -276,10 +276,10 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
 
                     {isRepair && (
                         <div className="space-y-4">
-                            <p className="bg-indigo-50 p-6 rounded-[2rem] text-indigo-700 italic border border-indigo-100 font-bold leading-snug shadow-inner">
+                            <p className="bg-indigo-500/10 p-6 rounded-[2rem] text-indigo-200 italic border border-indigo-500/10 font-bold leading-snug shadow-inner">
                                 "{item.generatedMessage}"
                             </p>
-                            <div className="flex items-center gap-2 text-indigo-400 font-black text-[10px] tracking-widest uppercase ml-4">
+                            <div className="flex items-center gap-2 text-indigo-500/50 font-black text-[10px] tracking-widest uppercase ml-4">
                                 <ShieldAlert size={14} /> NVC Framework
                             </div>
                         </div>
@@ -287,11 +287,11 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
 
                     {isPrompt && (
                         <div className="space-y-4">
-                            <div className="p-6 bg-white rounded-[2rem] border border-rose-100 shadow-sm relative">
-                                <p className="text-[10px] font-black text-rose-300 uppercase tracking-widest mb-2 italic">Chủ đề: {item.promptId?.text}</p>
-                                <p className="text-gray-800 font-bold italic leading-relaxed">"{item.answerText}"</p>
+                            <div className="p-6 bg-slate-900/60 rounded-[2rem] border border-rose-500/10 shadow-sm relative">
+                                <p className="text-[10px] font-black text-rose-500/40 uppercase tracking-widest mb-2 italic">Chủ đề: {item.promptId?.text}</p>
+                                <p className="text-slate-100 font-bold italic leading-relaxed">"{item.answerText}"</p>
                             </div>
-                            <div className="flex items-center gap-2 text-rose-400 font-black text-[10px] tracking-widest uppercase ml-4">
+                            <div className="flex items-center gap-2 text-rose-500/60 font-black text-[10px] tracking-widest uppercase ml-4">
                                 <Heart size={14} fill="currentColor" /> Love Map Answer
                             </div>
                         </div>
@@ -299,13 +299,13 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                 </div>
 
                 {/* Comment Section */}
-                <div className="pt-6 border-t border-gray-100 space-y-4">
+                <div className="pt-6 border-t border-white/5 space-y-4">
                     {item.comments && item.comments.length > 0 && (
                         <div className="space-y-3">
                             {hasMoreComments && !showAllComments && (
                                 <button
                                     onClick={() => setShowAllComments(true)}
-                                    className="text-[10px] font-black text-rose-400 uppercase tracking-widest ml-11 hover:text-rose-500 transition-colors"
+                                    className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest ml-11 hover:text-rose-500 transition-colors"
                                 >
                                     Xem thêm {item.comments.length - 3} bình luận...
                                 </button>
@@ -313,14 +313,14 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
 
                             {visibleComments.map((c: any, i: number) => (
                                 <div key={i} className="flex gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden shrink-0 shadow-sm border border-white/5">
                                         {c.userId?.avatarUrl ? (
                                             <img src={c.userId.avatarUrl} alt="c" className="w-full h-full object-cover" />
                                         ) : (
-                                            <span className="text-[10px] font-black text-gray-400 uppercase">{c.userId?.name?.[0] || 'U'}</span>
+                                            <span className="text-[10px] font-black text-slate-500 uppercase">{c.userId?.name?.[0] || 'U'}</span>
                                         )}
                                     </div>
-                                    <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3 px-4 text-sm font-medium text-gray-700">
+                                    <div className="bg-slate-800/50 rounded-2xl rounded-tl-none p-3 px-4 text-sm font-medium text-slate-300">
                                         {c.content}
                                     </div>
                                 </div>
@@ -341,7 +341,7 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                         <input
                             type="text"
                             placeholder="Viết phản hồi của bạn..."
-                            className="input w-full bg-gray-50 rounded-full text-sm font-bold focus:bg-white transition-colors border-none ring-1 ring-gray-100 focus:ring-2 focus:ring-rose-200 text-gray-900"
+                            className="input w-full bg-slate-800/50 rounded-full text-sm font-bold focus:bg-slate-800 transition-colors border-none ring-1 ring-white/5 focus:ring-2 focus:ring-rose-500/20 text-white"
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && comment && addComment.mutate()}
@@ -349,7 +349,7 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                         <button
                             onClick={() => addComment.mutate()}
                             disabled={!comment || addComment.isPending}
-                            className="btn btn-circle btn-primary bg-rose-500 border-none text-white shadow-lg shadow-rose-200"
+                            className="btn btn-circle btn-primary bg-rose-500 border-none text-white shadow-lg shadow-rose-500/20"
                         >
                             {addComment.isPending ? <span className="loading loading-spinner loading-xs"></span> : <Send size={16} />}
                         </button>

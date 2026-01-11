@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import User from '../models/User';
+import Couple from '../models/Couple';
 
 const router = Router();
 
@@ -8,7 +9,35 @@ const router = Router();
 router.get('/profile', authMiddleware, async (req: AuthRequest, res) => {
     try {
         const user = await User.findById(req.user?.userId).select('-passwordHash');
-        res.json(user);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const coupleId = req.user?.coupleId;
+        let partnerInfo = null;
+
+        if (coupleId) {
+            const couple = await Couple.findById(coupleId);
+            if (couple) {
+                const partnerId = couple.memberIds.find((id: any) => id.toString() !== user._id.toString());
+                if (partnerId) {
+                    const partner = await User.findById(partnerId).select('name avatarUrl');
+                    if (partner) {
+                        partnerInfo = {
+                            id: partner._id,
+                            name: partner.name,
+                            avatarUrl: partner.avatarUrl
+                        };
+                    }
+                }
+            }
+        }
+
+        const userObj = user.toObject();
+        res.json({
+            ...userObj,
+            partnerId: partnerInfo?.id,
+            partnerName: partnerInfo?.name,
+            partnerAvatar: partnerInfo?.avatarUrl
+        });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
