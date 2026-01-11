@@ -131,9 +131,13 @@ router.get('/stats', authMiddleware, async (req: AuthRequest, res) => {
         if (!couple) return res.status(404).json({ message: 'Couple không tồn tại' });
 
         const now = new Date();
-        const baseDate = couple.pairedAt || couple.createdAt;
-        const diffTime = Math.abs(now.getTime() - new Date(baseDate).getTime());
-        const daysTogether = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const start = new Date(couple.pairedAt || couple.createdAt);
+
+        // Use calendar days: Start date is Day 1
+        const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const diffTime = Math.abs(today.getTime() - startDay.getTime());
+        const daysTogether = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
         // Calculate Streak based on Check-ins
         const checkins = await CheckIn.find({ coupleId })
