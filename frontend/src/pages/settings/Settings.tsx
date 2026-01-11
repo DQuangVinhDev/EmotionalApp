@@ -140,8 +140,23 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
         email: profile?.email || '',
         avatarUrl: profile?.avatarUrl || '',
         timezone: profile?.timezone || 'Asia/Ho_Chi_Minh',
-        emailNotifications: profile?.settings?.emailNotifications !== false
+        emailNotifications: profile?.settings?.emailNotifications !== false,
+        pushNotifications: profile?.settings?.pushNotifications !== false
     });
+    const [isCurrentDeviceSubscribed, setIsCurrentDeviceSubscribed] = useState(false);
+
+    useEffect(() => {
+        const checkSubscription = async () => {
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.getRegistration();
+                if (registration) {
+                    const subscription = await registration.pushManager.getSubscription();
+                    setIsCurrentDeviceSubscribed(!!subscription);
+                }
+            }
+        };
+        checkSubscription();
+    }, []);
 
     useEffect(() => {
         if (profile) {
@@ -150,7 +165,8 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                 email: profile.email || '',
                 avatarUrl: profile.avatarUrl || '',
                 timezone: profile.timezone || 'Asia/Ho_Chi_Minh',
-                emailNotifications: profile.settings?.emailNotifications !== false
+                emailNotifications: profile.settings?.emailNotifications !== false,
+                pushNotifications: profile.settings?.pushNotifications !== false
             });
         }
     }, [profile]);
@@ -173,7 +189,11 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
     const subscribeToPush = async () => {
         try {
             if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-                throw new Error('Trình duyệt của bạn không hỗ trợ thông báo đẩy trực tiếp. Hãy thử dùng Chrome hoặc Safari.');
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                if (isIOS) {
+                    throw new Error('Trên iOS, bạn cần nhấn nút "Chia sẻ" -> "Thêm vào MH chính" để kích hoạt thông báo đẩy.');
+                }
+                throw new Error('Trình duyệt của bạn không hỗ trợ thông báo đẩy trực tiếp. Hãy thử dùng Chrome hoặc Safari mới nhất.');
             }
 
             const publicVapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
@@ -213,6 +233,7 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
             });
 
             await client.post('/users/push-subscribe', { subscription });
+            setIsCurrentDeviceSubscribed(true);
             toast.success('Đã kích hoạt thông báo thành công! 🔔');
         } catch (error: any) {
             console.error('Push Error Details:', error);
@@ -236,7 +257,8 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
         } else if (type === 'NOTIFICATIONS') {
             payload = {
                 settings: {
-                    emailNotifications: formData.emailNotifications
+                    emailNotifications: formData.emailNotifications,
+                    pushNotifications: formData.pushNotifications
                 }
             };
         }
@@ -374,6 +396,22 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                                 />
                             </div>
 
+                            <div className={`flex items-center justify-between p-6 rounded-3xl border transition-all ${!profile?.pushSubscriptions?.length ? 'bg-slate-800/50 border-white/5 opacity-50' : 'bg-white/5 border-white/10'}`}>
+                                <div className="space-y-1">
+                                    <p className="font-black text-white text-sm">Thông báo trên thiết bị</p>
+                                    <p className="text-[10px] text-slate-400 font-bold leading-tight">
+                                        {!profile?.pushSubscriptions?.length ? 'Cần kích hoạt máy này bên dưới trước' : 'Bật/Tắt tất cả thông báo đẩy'}
+                                    </p>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    className="toggle toggle-rose toggle-lg"
+                                    disabled={!profile?.pushSubscriptions?.length}
+                                    checked={formData.pushNotifications}
+                                    onChange={e => setFormData({ ...formData, pushNotifications: e.target.checked })}
+                                />
+                            </div>
+
                             <div className="flex flex-col p-6 bg-rose-500/5 rounded-3xl border border-rose-500/10 space-y-4">
                                 <div className="space-y-1">
                                     <p className="font-black text-white text-sm">Thông báo trên điện thoại</p>
@@ -381,9 +419,12 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                                 </div>
                                 <button
                                     onClick={subscribeToPush}
-                                    className="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-[0_10px_25px_rgba(244,63,94,0.3)] hover:brightness-110 transition-all active:scale-95"
+                                    className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 ${!formData.pushNotifications ? 'bg-slate-800 text-slate-500 border border-white/5 opacity-50 cursor-not-allowed' : isCurrentDeviceSubscribed ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-rose-500 text-white shadow-[0_10px_25px_rgba(244,63,94,0.3)] hover:brightness-110'}`}
+                                    disabled={!formData.pushNotifications && isCurrentDeviceSubscribed}
                                 >
-                                    Bật thông báo trên máy này
+                                    {isCurrentDeviceSubscribed
+                                        ? (!formData.pushNotifications ? 'Đang tạm dừng nhận tin' : 'Đã kích hoạt trên máy này ✅')
+                                        : 'Kích hoạt trên máy này'}
                                 </button>
                                 <p className="text-[9px] text-slate-400 italic">Lưu ý: Bạn cần đồng ý khi trình duyệt hỏi quyền "Cho phép thông báo".</p>
                             </div>

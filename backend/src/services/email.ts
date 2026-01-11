@@ -73,7 +73,7 @@ export const sendNotificationEmail = async (toUserId: string, subject: string, m
         console.log('Notification email sent: %s', info.messageId);
 
         // SEND PUSH NOTIFICATION
-        if (user.pushSubscriptions && user.pushSubscriptions.length > 0) {
+        if (user.settings?.pushNotifications !== false && user.pushSubscriptions && user.pushSubscriptions.length > 0) {
             const pushPayload = JSON.stringify({
                 title: `[Couple App] ${subject}`,
                 body: message,

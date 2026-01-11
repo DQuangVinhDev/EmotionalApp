@@ -53,6 +53,8 @@ io.on('connection', (socket) => {
         const targetSocketId = users.get(to);
         if (targetSocketId) {
             io.to(targetSocketId).emit('incoming-call', { from: socket.id, offer, fromName, fromAvatar });
+        } else {
+            socket.emit('call-error', { message: 'Đối phương hiện không online hoặc chưa mở ứng dụng.' });
         }
     });
 

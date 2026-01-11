@@ -26,11 +26,14 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
     const [callEnded, setCallEnded] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
+
     const [isBlurry, setIsBlurry] = useState(false);
+    const [isCalling, setIsCalling] = useState(false);
 
     const myVideo = useRef<HTMLVideoElement>(null);
     const userVideo = useRef<HTMLVideoElement>(null);
     const connectionRef = useRef<any>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const { data: profile } = useQuery({
         queryKey: ['profile'],
@@ -77,12 +80,19 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
             console.error('[DEBUG] Socket connection error:', err.message);
         });
 
+        socket.on('call-error', ({ message }: any) => {
+            toast.error(message);
+            setIsCalling(false);
+            cleanupCall();
+        });
+
         return () => {
             socket.off('incoming-call');
             socket.off('call-ended');
             socket.off('security-notification');
             socket.off('connect');
             socket.off('connect_error');
+            socket.off('call-error');
         };
     }, [user?.id]);
 
@@ -137,6 +147,7 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
         setReceivingCall(false);
         setCallAccepted(false);
         setCallEnded(false);
+        setIsCalling(false);
         connectionRef.current?.destroy();
         connectionRef.current = null;
     };
@@ -151,6 +162,7 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
             return;
         }
 
+        setIsCalling(true);
         const peer = new Peer({ initiator: true, trickle: false, stream: stream });
 
         peer.on('signal', (data: any) => {
@@ -204,6 +216,7 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
 
     return (
         <motion.div
+            ref={containerRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -246,24 +259,44 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
                                 </div>
                                 <button
                                     onClick={callPartner}
-                                    className="px-8 py-4 bg-rose-500 text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl shadow-rose-500/20 hover:bg-rose-600 transition-all active:scale-95"
+                                    disabled={isCalling}
+                                    className={`px-8 py-4 rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl transition-all active:scale-95 ${isCalling ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-rose-500 text-white shadow-rose-500/20 hover:bg-rose-600'}`}
                                 >
-                                    Bắt đầu gọi cho {profile?.partnerName || 'đối phương'}
+                                    {isCalling ? 'Đang kết nối...' : `Bắt đầu gọi cho ${profile?.partnerName || 'đối phương'}`}
                                 </button>
 
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex items-center justify-center gap-2"
+                                >
+                                    <div className={`w-2 h-2 rounded-full ${stream && profile?.partnerId ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]' : 'bg-slate-700'}`} />
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                        {!profile?.partnerId ? 'Chưa kết đôi đối phương' : !stream ? 'Đang chuẩn bị camera...' : 'Sẵn sàng kết nối'}
+                                    </span>
+                                </motion.div>
                             </div>
                         )}
                     </div>
                 )}
 
                 {/* Local Video (Floating) */}
-                <div className="absolute top-24 right-6 w-32 h-44 bg-slate-800 rounded-3xl overflow-hidden border-2 border-white/10 shadow-2xl z-40 group">
-                    <video playsInline muted ref={myVideo} autoPlay className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                {/* Local Video (Floating & Draggable) */}
+                <motion.div
+                    drag
+                    dragConstraints={containerRef}
+                    whileDrag={{ scale: 1.1, cursor: 'grabbing' }}
+                    whileTap={{ cursor: 'grabbing' }}
+                    dragElastic={0.1}
+                    className="absolute top-24 right-6 w-32 h-44 bg-slate-800 rounded-3xl overflow-hidden border-2 border-white/10 shadow-2xl z-40 group cursor-grab touch-none"
+                    style={{ x: 0, y: 0 }} // Prevent transform accumulation issues on re-render
+                >
+                    <video playsInline muted ref={myVideo} autoPlay className="w-full h-full object-cover pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none">
                         {isMuted ? <MicOff size={16} className="text-rose-400" /> : <Mic size={16} className="text-white" />}
                         {isVideoOff ? <VideoOff size={16} className="text-rose-400" /> : <Video size={16} className="text-white" />}
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Watermark */}
                 <div className="absolute bottom-32 left-8 pointer-events-none opacity-20 select-none">

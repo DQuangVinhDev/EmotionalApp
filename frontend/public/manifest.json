@@ -1,0 +1,15 @@
+{
+    "name": "Couple App",
+    "short_name": "CoupleApp",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#020617",
+    "theme_color": "#f43f5e",
+    "icons": [
+        {
+            "src": "/vite.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+        }
+    ]
+}

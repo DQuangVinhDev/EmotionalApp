@@ -8,6 +8,7 @@ export interface IUser extends Document {
     avatarUrl?: string;
     settings: {
         emailNotifications: boolean;
+        pushNotifications: boolean;
     };
     pushSubscriptions: Array<{
         endpoint: string;
@@ -27,7 +28,8 @@ const UserSchema: Schema = new Schema({
     timezone: { type: String, default: 'Asia/Ho_Chi_Minh' },
     avatarUrl: { type: String },
     settings: {
-        emailNotifications: { type: Boolean, default: true }
+        emailNotifications: { type: Boolean, default: true },
+        pushNotifications: { type: Boolean, default: true }
     },
     pushSubscriptions: [{
         endpoint: String,
