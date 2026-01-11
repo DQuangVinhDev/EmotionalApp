@@ -8,17 +8,25 @@ import { MapPin, Camera, X, Save, Navigation2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Fix for default marker icon in Leaflet
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-let DefaultIcon = L.icon({
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41]
+// Reliable Heart-style House Icon for Map Markers
+const createMarkerIcon = (color: string) => L.divIcon({
+    html: `
+        <div style="background: white; padding: 8px; border-radius: 16px; border: 3px solid ${color}; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <path d="M12 18s-2-1.5-2-3a2 2 0 1 1 4 0c0 1.5-2 3-2 3z"/>
+            </svg>
+            <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid ${color};"></div>
+        </div>
+    `,
+    className: 'custom-div-icon',
+    iconSize: [44, 44],
+    iconAnchor: [22, 52],
+    popupAnchor: [0, -50]
 });
-L.Marker.prototype.options.icon = DefaultIcon;
+
+const homeIcon = createMarkerIcon('#f43f5e'); // Rose-500
+const newPointIcon = createMarkerIcon('#10b981'); // Emerald-500
 
 declare global {
     interface Window {
@@ -191,20 +199,28 @@ export default function CoupleMap() {
 
     return (
         <div className="h-screen w-full relative flex flex-col pt-6 px-6 overflow-hidden">
-            <div className="mb-6 flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-black text-gray-900 tracking-tight">Bản đồ Kỷ niệm</h1>
-                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mt-1">Dấu chân hạnh phúc của tụi mình</p>
+            <div className="pt-10 space-y-4 mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-1 bg-rose-500 rounded-full" />
+                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Love Map</span>
                 </div>
-                <button
-                    onClick={() => {
-                        setIsAdding(!isAdding);
-                        setSelectedCoords(null);
-                    }}
-                    className={`btn btn-circle ${isAdding ? 'btn-error' : 'btn-primary bg-rose-500 border-none'} shadow-lg scale-110`}
-                >
-                    {isAdding ? <X size={24} /> : <MapPin size={24} />}
-                </button>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-4xl font-black text-slate-950 tracking-tight">Bản đồ Kỷ niệm</h1>
+                        <p className="text-sm font-bold text-slate-500 mt-2 italic">Dấu chân hạnh phúc của tụi mình</p>
+                    </div>
+                    <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                            setIsAdding(!isAdding);
+                            setSelectedCoords(null);
+                        }}
+                        className={`btn btn-circle ${isAdding ? 'btn-error' : 'btn-primary bg-rose-500 border-none'} shadow-xl`}
+                    >
+                        {isAdding ? <X size={24} /> : <MapPin size={24} className="text-white" />}
+                    </motion.button>
+                </div>
             </div>
 
             <div className="flex-1 rounded-[3.5rem] overflow-hidden border-4 border-white shadow-2xl relative">
@@ -215,7 +231,7 @@ export default function CoupleMap() {
                     />
                     <MapEvents />
                     {locations?.map((loc: any) => (
-                        <Marker key={loc._id} position={[loc.lat, loc.lng]}>
+                        <Marker key={loc._id} position={[loc.lat, loc.lng]} icon={homeIcon}>
                             <Popup className="premium-popup">
                                 <div className="p-1 space-y-3 font-sans min-w-[180px]">
                                     {loc.imageUrl && (
@@ -247,7 +263,7 @@ export default function CoupleMap() {
                         </Marker>
                     ))}
                     {selectedCoords && (
-                        <Marker position={selectedCoords}>
+                        <Marker position={selectedCoords} icon={newPointIcon}>
                             <Popup>Điểm check-in mới ✨</Popup>
                         </Marker>
                     )}
@@ -318,6 +334,6 @@ export default function CoupleMap() {
                     <p className="text-[8px] text-gray-400 font-black uppercase tracking-[0.4em]">Footprints of Love • Since 2024</p>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

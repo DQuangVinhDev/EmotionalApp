@@ -83,10 +83,14 @@ export default function Ritual() {
     return (
         <div className="p-8 space-y-10 pb-32">
             {/* Header */}
-            <div className="pt-6 flex justify-between items-center">
+            <div className="pt-10 space-y-4 mb-2">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-1 bg-rose-500 rounded-full" />
+                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Rituals</span>
+                </div>
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-none">Nghi thức & Gắn kết</h1>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-3 italic">Dành thời gian chất lượng cho nhau</p>
+                    <h1 className="text-4xl font-black text-slate-950 tracking-tight leading-none">Nghi thức & Gắn kết</h1>
+                    <p className="text-sm font-bold text-slate-500 mt-3 italic">Dành thời gian chất lượng cho nhau</p>
                 </div>
             </div>
 

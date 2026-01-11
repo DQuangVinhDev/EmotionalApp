@@ -4,6 +4,7 @@ import client from '../../api/client';
 import { ChevronLeft, Calendar, Search, MessageCircle, Star, ShieldAlert, Sparkles, Heart, Lock, Globe, Quote } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import MoodEmoji from '../../components/MoodEmoji';
 
 export default function MemoryLane() {
     const navigate = useNavigate();
@@ -29,15 +30,19 @@ export default function MemoryLane() {
 
     return (
         <div className="bg-white min-h-screen pb-32">
-            {/* Header */}
-            <div className="p-6 bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-gray-50">
-                <div className="flex items-center gap-4 mb-6">
-                    <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors">
-                        <ChevronLeft size={24} />
-                    </button>
-                    <div className="flex-1">
-                        <h1 className="text-xl font-black text-gray-900 tracking-tight">Hành trình Kỷ niệm</h1>
-                        <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mt-1">Nơi lưu giữ những khoảnh khắc</p>
+            <div className="p-6 pb-0 space-y-8">
+                <div className="flex flex-col gap-6 pt-4">
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => navigate(-1)} className="p-3 -ml-2 rounded-2xl bg-gray-50 text-slate-400 hover:bg-gray-100 transition-all shadow-sm">
+                            <ChevronLeft size={24} />
+                        </button>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-1">
+                                <div className="w-8 h-1 bg-rose-500 rounded-full" />
+                                <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Timeline</span>
+                            </div>
+                            <h1 className="text-3xl font-black text-slate-950 tracking-tight">Hành trình Kỷ niệm</h1>
+                        </div>
                     </div>
                 </div>
 
@@ -95,7 +100,7 @@ export default function MemoryLane() {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 
@@ -167,7 +172,7 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
                         <div className="space-y-6">
                             <div className="flex items-center justify-between bg-emerald-50/50 p-4 rounded-3xl border border-emerald-100/50">
                                 <div className="flex items-center gap-4">
-                                    <span className="text-4xl">{['😢', '😕', '😐', '🙂', '😊'][item.mood - 1]}</span>
+                                    <MoodEmoji mood={item.mood} size="lg" />
                                     <div>
                                         <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Tâm trạng</h4>
                                         <p className="text-sm font-bold text-gray-700">{['Tệ', 'Kém', 'Ổn', 'Tốt', 'Tuyệt'][item.mood - 1]}</p>
@@ -183,6 +188,28 @@ function MemoryItem({ item, idx }: { item: any; idx: number }) {
                                 <div className="relative pl-6">
                                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-200 rounded-full" />
                                     <p className="text-sm font-bold text-gray-500 italic leading-relaxed pr-4">"{item.gratitudeText}"</p>
+                                </div>
+                            )}
+                            {item.need && (
+                                <div className="flex items-center gap-2 bg-indigo-50/50 p-3 rounded-2xl border border-indigo-100/50">
+                                    <span className="text-lg">
+                                        {item.need === 'LISTEN' && '👂'}
+                                        {item.need === 'HUG' && '🫂'}
+                                        {item.need === 'SPACE' && '☁️'}
+                                        {item.need === 'HELP' && '🤝'}
+                                        {item.need === 'PLAY' && '🎮'}
+                                        {item.need === 'CLARITY' && '💡'}
+                                    </span>
+                                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                                        Đang cần: {
+                                            item.need === 'LISTEN' ? 'Lắng nghe' :
+                                                item.need === 'HUG' ? 'Cái ôm' :
+                                                    item.need === 'SPACE' ? 'Khoảng lặng' :
+                                                        item.need === 'HELP' ? 'Giúp đỡ' :
+                                                            item.need === 'PLAY' ? 'Giải trí' :
+                                                                item.need === 'CLARITY' ? 'Làm rõ' : item.need
+                                        }
+                                    </span>
                                 </div>
                             )}
                         </div>

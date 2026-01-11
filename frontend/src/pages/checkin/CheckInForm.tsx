@@ -23,6 +23,8 @@ export default function CheckInForm() {
     const [stress, setStress] = useState(3);
     const [gratitude, setGratitude] = useState('');
     const [need, setNeed] = useState('LISTEN');
+    const [customNeed, setCustomNeed] = useState('');
+    const [isCustomNeed, setIsCustomNeed] = useState(false);
     const [visibility, setVisibility] = useState<'PRIVATE' | 'SHARED_NOW'>('PRIVATE');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -33,7 +35,7 @@ export default function CheckInForm() {
             const dateKey = DateTime.now().toFormat('yyyy-MM-dd');
             await client.post('/checkins', {
                 dateKey, mood, energy, stress,
-                need,
+                need: isCustomNeed ? customNeed : need,
                 gratitudeText: gratitude,
                 visibility
             });
@@ -107,14 +109,41 @@ export default function CheckInForm() {
                         ].map((n) => (
                             <button
                                 key={n.id}
-                                onClick={() => setNeed(n.id)}
-                                className={`flex items-center gap-3 p-4 rounded-3xl border-2 transition-all ${need === n.id ? 'bg-indigo-50 border-indigo-500 shadow-md text-indigo-700' : 'bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100'}`}
+                                onClick={() => {
+                                    setNeed(n.id);
+                                    setIsCustomNeed(false);
+                                }}
+                                className={`flex items-center gap-3 p-4 rounded-3xl border-2 transition-all ${(!isCustomNeed && need === n.id) ? 'bg-indigo-50 border-indigo-500 shadow-md text-indigo-700' : 'bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100'}`}
                             >
                                 <span className="text-xl">{n.emoji}</span>
                                 <span className="text-xs font-black uppercase tracking-tight">{n.label}</span>
                             </button>
                         ))}
+                        <button
+                            onClick={() => setIsCustomNeed(true)}
+                            className={`flex items-center gap-3 p-4 rounded-3xl border-2 transition-all ${isCustomNeed ? 'bg-indigo-50 border-indigo-500 shadow-md text-indigo-700' : 'bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100'}`}
+                        >
+                            <span className="text-xl">✨</span>
+                            <span className="text-xs font-black uppercase tracking-tight">Khác</span>
+                        </button>
                     </div>
+
+                    {isCustomNeed && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-4"
+                        >
+                            <input
+                                type="text"
+                                placeholder="Bạn đang cần gì... (ví dụ: Một nụ hôn)"
+                                className="input input-bordered w-full rounded-2xl bg-gray-50 border-none ring-1 ring-indigo-100 focus:ring-2 focus:ring-indigo-500/20 font-bold text-gray-700"
+                                value={customNeed}
+                                onChange={(e) => setCustomNeed(e.target.value)}
+                                autoFocus
+                            />
+                        </motion.div>
+                    )}
                 </section>
 
                 {/* Gratitude Section */}

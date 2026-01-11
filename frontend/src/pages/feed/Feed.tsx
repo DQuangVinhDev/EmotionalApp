@@ -37,26 +37,32 @@ export default function Feed() {
     return (
         <div className="p-8 space-y-10 pb-32">
             {/* Dynamic Header */}
-            <div className="pt-6 flex justify-between items-end">
-                <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-none">Journal chung</h1>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-3">Khoảnh khắc gắn kết của hai bạn</p>
+            <div className="pt-10 space-y-4 mb-2">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-1 bg-rose-500 rounded-full" />
+                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Memory Lane</span>
                 </div>
-                <div className="flex gap-2">
-                    <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setShowFilters(!showFilters)}
-                        className={`btn btn-circle btn-ghost ${showFilters ? 'bg-rose-500 text-white' : 'bg-rose-50 text-rose-500'} border-none shadow-sm`}
-                    >
-                        <Filter size={20} />
-                    </motion.button>
-                    <motion.button
-                        whileTap={{ rotate: 180 }}
-                        onClick={() => refetch()}
-                        className="btn btn-circle btn-ghost text-rose-500 bg-rose-50 border-none shadow-sm shadow-rose-100"
-                    >
-                        <RefreshCcw size={20} />
-                    </motion.button>
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h1 className="text-4xl font-black text-slate-950 tracking-tight leading-none">Journal chung</h1>
+                        <p className="text-sm font-bold text-slate-500 mt-3 italic">Khoảnh khắc gắn kết của hai bạn</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setShowFilters(!showFilters)}
+                            className={`btn btn-circle btn-ghost ${showFilters ? 'bg-rose-500 text-white' : 'bg-white text-rose-500'} border-none shadow-md`}
+                        >
+                            <Filter size={20} />
+                        </motion.button>
+                        <motion.button
+                            whileTap={{ rotate: 180 }}
+                            onClick={() => refetch()}
+                            className="btn btn-circle btn-ghost text-rose-500 bg-white border-none shadow-md"
+                        >
+                            <RefreshCcw size={20} />
+                        </motion.button>
+                    </div>
                 </div>
             </div>
 
@@ -203,9 +209,9 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                         </div>
                     </div>
                     <div className="flex-1">
-                        <h3 className="font-black text-gray-800 text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Partner'}</h3>
-                        <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
-                            <span className="w-1 h-1 bg-gray-300 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' })}
+                        <h3 className="font-black text-slate-900 text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Partner'}</h3>
+                        <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
+                            <span className="w-1 h-1 bg-slate-300 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' })}
                         </p>
                     </div>
                 </div>
@@ -240,7 +246,29 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                             {item.gratitudeText && (
                                 <div className="relative pl-6">
                                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-200 rounded-full" />
-                                    <p className="text-sm font-bold text-gray-500 italic leading-relaxed pr-4">"{item.gratitudeText}"</p>
+                                    <p className="text-sm font-bold text-slate-600 italic leading-relaxed pr-4">"{item.gratitudeText}"</p>
+                                </div>
+                            )}
+                            {item.need && (
+                                <div className="flex items-center gap-2 bg-indigo-50/50 p-3 rounded-2xl border border-indigo-100/50">
+                                    <span className="text-lg">
+                                        {item.need === 'LISTEN' && '👂'}
+                                        {item.need === 'HUG' && '🫂'}
+                                        {item.need === 'SPACE' && '☁️'}
+                                        {item.need === 'HELP' && '🤝'}
+                                        {item.need === 'PLAY' && '🎮'}
+                                        {item.need === 'CLARITY' && '💡'}
+                                    </span>
+                                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                                        Đang cần: {
+                                            item.need === 'LISTEN' ? 'Lắng nghe' :
+                                                item.need === 'HUG' ? 'Cái ôm' :
+                                                    item.need === 'SPACE' ? 'Khoảng lặng' :
+                                                        item.need === 'HELP' ? 'Giúp đỡ' :
+                                                            item.need === 'PLAY' ? 'Giải trí' :
+                                                                item.need === 'CLARITY' ? 'Làm rõ' : item.need
+                                        }
+                                    </span>
                                 </div>
                             )}
                         </div>

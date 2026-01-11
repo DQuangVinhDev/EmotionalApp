@@ -22,7 +22,7 @@ export interface ICheckIn extends Document {
     mood: number;
     energy: number;
     stress: number;
-    need: NeedType;
+    need: string;
     gratitudeText: string;
     visibility: VisibilityType;
     scheduledShareAt?: Date;
@@ -37,7 +37,7 @@ const CheckInSchema: Schema = new Schema({
     mood: { type: Number, required: true, min: 1, max: 5 },
     energy: { type: Number, required: true, min: 1, max: 5 },
     stress: { type: Number, required: true, min: 1, max: 5 },
-    need: { type: String, enum: Object.values(NeedType), required: true },
+    need: { type: String, required: true },
     gratitudeText: { type: String },
     visibility: { type: String, enum: Object.values(VisibilityType), default: VisibilityType.PRIVATE },
     scheduledShareAt: { type: Date },

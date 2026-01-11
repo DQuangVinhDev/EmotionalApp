@@ -66,3 +66,15 @@ body {
 ::-webkit-scrollbar-thumb {
   @apply bg-rose-200 rounded-full;
 }
+
+/* Fix for Leaflet Custom DivIcons */
+.custom-div-icon {
+  background: none !important;
+  border: none !important;
+}
+
+.leaflet-marker-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

@@ -76,18 +76,27 @@ export default function Home() {
     return (
         <div className="p-8 space-y-10 pb-32">
             {/* Header Section */}
-            <div className="flex justify-between items-start pt-6">
-                <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-tight">
-                        Chào <span className="text-rose-500">{user?.name.split(' ')[0]}</span>! ✨
-                    </h1>
-                    <p className="text-gray-400 font-bold text-sm mt-1">
-                        {stats?.daysTogether ? `Ngày thứ ${stats.daysTogether} bên nhau` : 'Hành trình mới bắt đầu'}
-                    </p>
+            <div className="pt-10 space-y-2">
+                <div className="flex items-center gap-3 mb-1">
+                    <div className="w-8 h-1 bg-rose-500 rounded-full" />
+                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Dashboard</span>
                 </div>
-                <div className="flex items-center gap-2 bg-amber-50 px-4 py-2 rounded-2xl border border-amber-100 shadow-sm">
-                    <Flame size={18} className="text-orange-500 fill-orange-500" />
-                    <span className="font-black text-orange-600 text-sm italic">{stats?.streak || 0} Days</span>
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h1 className="text-4xl font-black text-slate-950 tracking-tight leading-tight">
+                            Chào <span className="text-rose-500">{user?.name.split(' ')[0]}</span>! ✨
+                        </h1>
+                        <p className="text-slate-500 font-bold text-sm mt-2">
+                            {stats?.daysTogether ? `Ngày thứ ${stats.daysTogether} bên nhau` : 'Hành trình mới bắt đầu'}
+                        </p>
+                    </div>
+                    <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        className="flex items-center gap-2 bg-white p-3 rounded-2xl shadow-sm border border-gray-100"
+                    >
+                        <Flame size={20} className="text-orange-500 fill-orange-500" />
+                        <span className="font-black text-orange-600 text-sm italic">{stats?.streak || 0} Days</span>
+                    </motion.div>
                 </div>
             </div>
 
@@ -101,14 +110,14 @@ export default function Home() {
                     <Heart size={80} fill="#f43f5e" />
                 </div>
                 <span className="badge badge-primary font-black text-[10px] tracking-widest uppercase py-3">Love Map Tip</span>
-                <p className="text-gray-700 font-bold text-lg leading-snug relative z-10">
+                <p className="text-slate-700 font-bold text-lg leading-snug relative z-10">
                     "{tip}"
                 </p>
             </motion.div>
 
             {/* Feature Grid */}
             <div className="space-y-4">
-                <h2 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] pl-2">Hành động mỗi ngày</h2>
+                <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] pl-2">Hành động mỗi ngày</h2>
 
                 <div className="grid gap-4">
                     <MainFeature
@@ -170,8 +179,8 @@ function MainFeature({ title, desc, icon, color, onClick }: any) {
                 {icon}
             </div>
             <div className="flex-1 relative z-10">
-                <h3 className="font-black text-gray-800 tracking-tight group-hover:text-rose-500 transition-colors">{title}</h3>
-                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-wider mt-1">{desc}</p>
+                <h3 className="font-black text-slate-800 tracking-tight group-hover:text-rose-500 transition-colors">{title}</h3>
+                <p className="text-slate-500 text-[11px] font-bold uppercase tracking-wider mt-1">{desc}</p>
             </div>
             <ArrowRight size={18} className="text-gray-200 group-hover:text-rose-400 group-hover:translate-x-1 transition-all mr-2" />
         </motion.button>
@@ -188,7 +197,7 @@ function SubFeature({ title, icon, color, onClick }: any) {
             <div className={`p-4 rounded-2xl text-white ${color} shadow-lg shadow-current/20 group-hover:scale-110 transition-transform`}>
                 {icon}
             </div>
-            <h3 className="font-black text-gray-800 text-xs tracking-tight uppercase group-hover:text-rose-500 transition-colors">{title}</h3>
+            <h3 className="font-black text-gray-800 text-xs tracking-tight uppercase group-hover:text-rose-600 transition-colors">{title}</h3>
         </motion.button>
     );
 }
