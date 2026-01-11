@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Video, VideoOff, Mic, MicOff, PhoneOff, ShieldAlert, User, ShieldCheck, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Video, VideoOff, Mic, MicOff, PhoneOff, User, ShieldCheck, X } from 'lucide-react';
 import io from 'socket.io-client';
 import SimplePeer from 'simple-peer';
 const Peer = (SimplePeer as any).default || SimplePeer;
@@ -17,7 +17,6 @@ const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
 export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { user } = useAuthStore();
     const [stream, setStream] = useState<MediaStream | null>(null);
-    const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
     const [receivingCall, setReceivingCall] = useState(false);
     const [caller, setCaller] = useState("");
     const [callerName, setCallerName] = useState("");
@@ -138,7 +137,6 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
         setReceivingCall(false);
         setCallAccepted(false);
         setCallEnded(false);
-        setRemoteStream(null);
         connectionRef.current?.destroy();
         connectionRef.current = null;
     };
@@ -149,7 +147,7 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
             if (!stream) reason += " (Thiếu Camera)";
             if (!profile?.partnerId) reason += " (Chưa kết đôi/Thiếu ID đối phương)";
 
-            toast.error(`Không thể gọi: ${reason}`);
+            toast.error(`Không thể gọi: ${reason} `);
             return;
         }
 
@@ -165,7 +163,6 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
         });
 
         peer.on('stream', (remoteStream: MediaStream) => {
-            setRemoteStream(remoteStream);
             if (userVideo.current) userVideo.current.srcObject = remoteStream;
         });
 
@@ -190,7 +187,6 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
         });
 
         peer.on('stream', (remoteStream: MediaStream) => {
-            setRemoteStream(remoteStream);
             if (userVideo.current) userVideo.current.srcObject = remoteStream;
         });
 
@@ -220,7 +216,7 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
             </div>
 
             {/* Remote Video (Main) */}
-            <div className={`relative w-full h-full transition-all duration-700 ${isBlurry ? 'blur-3xl grayscale' : ''}`}>
+            <div className={`relative w - full h - full transition - all duration - 700 ${isBlurry ? 'blur-3xl grayscale' : ''} `}>
                 {callAccepted && !callEnded ? (
                     <video playsInline ref={userVideo} autoPlay className="w-full h-full object-cover" />
                 ) : (
@@ -284,7 +280,7 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
                         if (audioTrack) audioTrack.enabled = !audioTrack.enabled;
                         setIsMuted(!isMuted);
                     }}
-                    className={`p-5 rounded-full transition-all ${isMuted ? 'bg-rose-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                    className={`p - 5 rounded - full transition - all ${isMuted ? 'bg-rose-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'} `}
                 >
                     {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
                 </button>
@@ -302,7 +298,7 @@ export default function PrivateVideoCall({ isOpen, onClose }: { isOpen: boolean;
                         if (videoTrack) videoTrack.enabled = !videoTrack.enabled;
                         setIsVideoOff(!isVideoOff);
                     }}
-                    className={`p-5 rounded-full transition-all ${isVideoOff ? 'bg-rose-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                    className={`p - 5 rounded - full transition - all ${isVideoOff ? 'bg-rose-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'} `}
                 >
                     {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
                 </button>

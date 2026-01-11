@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History, Video } from 'lucide-react';
-import PrivateVideoCall from './video/PrivateVideoCall';
 import { useAuthStore } from '../store/useAuthStore';
 import { useQuery } from '@tanstack/react-query';
 import client from '../api/client';
