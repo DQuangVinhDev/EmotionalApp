@@ -155,6 +155,77 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
         }
     }, [profile]);
 
+    const urlBase64ToUint8Array = (base64String: string) => {
+        const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+        const base64 = (base64String + padding)
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    };
+
+    const subscribeToPush = async () => {
+        try {
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                throw new Error('Trình duyệt của bạn không hỗ trợ thông báo đẩy trực tiếp. Hãy thử dùng Chrome hoặc Safari.');
+            }
+
+            const publicVapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+            if (!publicVapidKey || publicVapidKey.length < 50) {
+                console.error('VITE_VAPID_PUBLIC_KEY is invalid or missing');
+                throw new Error('Lỗi cấu hình hệ thống: Mã định danh thông báo không hợp lệ.');
+            }
+
+            let registration = await navigator.serviceWorker.getRegistration();
+            if (!registration) {
+                registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+            }
+
+            // Wait for service worker to be ready
+            await navigator.serviceWorker.ready;
+
+            // Try to unsubscribe first to avoid key mismatch errors (AbortError)
+            try {
+                const existingSub = await registration.pushManager.getSubscription();
+                if (existingSub) {
+                    await existingSub.unsubscribe();
+                }
+            } catch (e) {
+                console.warn('Unsubscribe failed, continuing...', e);
+            }
+
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                throw new Error('Bạn cần cấp quyền "Cho phép thông báo" trong phần cài đặt trình duyệt.');
+            }
+
+            const applicationServerKey = urlBase64ToUint8Array(publicVapidKey.trim());
+
+            const subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: applicationServerKey
+            });
+
+            await client.post('/users/push-subscribe', { subscription });
+            toast.success('Đã kích hoạt thông báo thành công! 🔔');
+        } catch (error: any) {
+            console.error('Push Error Details:', error);
+            if (error.name === 'NotAllowedError') {
+                toast.error('Bạn đã chặn quyền thông báo. Hãy bật lại trong cài đặt trình duyệt.');
+            } else if (error.name === 'AbortError' || error.message.includes('Registration failed')) {
+                toast.error('Lỗi dịch vụ thông báo (Push Service Error). Hãy chắc chắn bạn không dùng VPN/Ẩn danh và hãy F5 lại trang.');
+            } else {
+                toast.error(error.message || 'Không thể bật thông báo');
+            }
+        }
+    };
+
     const handleSave = () => {
         let payload: any = {};
         if (type === 'PROFILE') {
@@ -292,8 +363,8 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                         <div className="space-y-6">
                             <div className="flex items-center justify-between p-6 bg-orange-50/50 rounded-3xl border border-orange-100/50 transition-all">
                                 <div className="space-y-1">
-                                    <p className="font-black text-gray-800 text-sm">Thông báo qua Email</p>
-                                    <p className="text-[10px] text-gray-400 font-bold leading-tight">Nhận email khi đối phương tương tác</p>
+                                    <p className="font-black text-slate-800 text-sm">Thông báo qua Email</p>
+                                    <p className="text-[10px] text-slate-400 font-bold leading-tight">Nhận email khi đối phương tương tác</p>
                                 </div>
                                 <input
                                     type="checkbox"
@@ -301,6 +372,20 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                                     checked={formData.emailNotifications}
                                     onChange={e => setFormData({ ...formData, emailNotifications: e.target.checked })}
                                 />
+                            </div>
+
+                            <div className="flex flex-col p-6 bg-rose-50/50 rounded-3xl border border-rose-100/50 space-y-4">
+                                <div className="space-y-1">
+                                    <p className="font-black text-slate-800 text-sm">Thông báo trên điện thoại</p>
+                                    <p className="text-[10px] text-slate-400 font-bold leading-tight uppercase tracking-wider">Web Push Notifications</p>
+                                </div>
+                                <button
+                                    onClick={subscribeToPush}
+                                    className="w-full py-4 bg-white text-rose-500 rounded-2xl font-black text-xs uppercase tracking-widest border border-rose-100 shadow-sm hover:shadow-md transition-all active:scale-95"
+                                >
+                                    Bật thông báo trên máy này
+                                </button>
+                                <p className="text-[9px] text-slate-400 italic">Lưu ý: Bạn cần đồng ý khi trình duyệt hỏi quyền "Cho phép thông báo".</p>
                             </div>
                         </div>
                     )}
@@ -313,16 +398,18 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                     )}
                 </div>
 
-                {type !== 'PRIVACY' && (
-                    <button
-                        onClick={handleSave}
-                        disabled={isPending}
-                        className="w-full btn btn-primary btn-lg rounded-[2rem] border-none font-black shadow-xl shadow-rose-200 gap-2"
-                    >
-                        {isPending ? <span className="loading loading-spinner"></span> : <><Save size={20} /> Lưu thay đổi</>}
-                    </button>
-                )}
-            </motion.div>
-        </motion.div>
+                {
+                    type !== 'PRIVACY' && (
+                        <button
+                            onClick={handleSave}
+                            disabled={isPending}
+                            className="w-full btn btn-primary btn-lg rounded-[2rem] border-none font-black shadow-xl shadow-rose-200 gap-2"
+                        >
+                            {isPending ? <span className="loading loading-spinner"></span> : <><Save size={20} /> Lưu thay đổi</>}
+                        </button>
+                    )
+                }
+            </motion.div >
+        </motion.div >
     );
 }

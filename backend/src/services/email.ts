@@ -1,9 +1,19 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import webpush from 'web-push';
 import User from '../models/User';
 import Couple from '../models/Couple';
 
 dotenv.config();
+
+// Web Push Configuration
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+    webpush.setVapidDetails(
+        'mailto:support@emotional-app.com',
+        process.env.VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+    );
+}
 
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.ethereal.email',
@@ -61,8 +71,43 @@ export const sendNotificationEmail = async (toUserId: string, subject: string, m
 
         const info = await transporter.sendMail(mailOptions);
         console.log('Notification email sent: %s', info.messageId);
+
+        // SEND PUSH NOTIFICATION
+        if (user.pushSubscriptions && user.pushSubscriptions.length > 0) {
+            const pushPayload = JSON.stringify({
+                title: `[Couple App] ${subject}`,
+                body: message,
+                icon: 'https://emotional-frontend-mcyr.onrender.com/logo192.png',
+                data: {
+                    url: appUrl
+                }
+            });
+
+            const updatedSubscriptions = [...user.pushSubscriptions];
+            let changed = false;
+
+            const pushPromises = user.pushSubscriptions.map(async (sub, index) => {
+                try {
+                    await webpush.sendNotification(sub, pushPayload);
+                } catch (error: any) {
+                    if (error.statusCode === 410 || error.statusCode === 404) {
+                        // Gone or Not Found - subscription is no longer valid
+                        updatedSubscriptions.splice(index, 1);
+                        changed = true;
+                    }
+                    console.error('Push error:', error.message);
+                }
+            });
+
+            await Promise.all(pushPromises);
+
+            if (changed) {
+                user.pushSubscriptions = updatedSubscriptions;
+                await user.save();
+            }
+        }
     } catch (error) {
-        console.error('Error sending notification email:', error);
+        console.error('Error sending notifications:', error);
     }
 };
 

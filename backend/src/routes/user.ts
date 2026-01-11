@@ -38,4 +38,27 @@ router.patch('/profile', authMiddleware, async (req: AuthRequest, res) => {
     }
 });
 
+// Subscribe to push notifications
+router.post('/push-subscribe', authMiddleware, async (req: AuthRequest, res) => {
+    try {
+        const { subscription } = req.body;
+        const user = await User.findById(req.user?.userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Initialize if empty
+        if (!user.pushSubscriptions) user.pushSubscriptions = [];
+
+        // Add if not already exists (check by endpoint)
+        const exists = user.pushSubscriptions.some(s => s.endpoint === subscription.endpoint);
+        if (!exists) {
+            user.pushSubscriptions.push(subscription);
+            await user.save();
+        }
+
+        res.status(201).json({ message: 'Đã đăng ký thông báo đẩy thành công! 🔔' });
+    } catch (error: any) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
 export default router;

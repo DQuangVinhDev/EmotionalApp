@@ -9,6 +9,13 @@ export interface IUser extends Document {
     settings: {
         emailNotifications: boolean;
     };
+    pushSubscriptions: Array<{
+        endpoint: string;
+        keys: {
+            p256dh: string;
+            auth: string;
+        }
+    }>;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -21,7 +28,14 @@ const UserSchema: Schema = new Schema({
     avatarUrl: { type: String },
     settings: {
         emailNotifications: { type: Boolean, default: true }
-    }
+    },
+    pushSubscriptions: [{
+        endpoint: String,
+        keys: {
+            p256dh: String,
+            auth: String
+        }
+    }]
 }, { timestamps: true });
 
 export default mongoose.model<IUser>('User', UserSchema);
