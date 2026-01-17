@@ -18,7 +18,7 @@ import Settings from './pages/settings/Settings';
 import LoveMap from './pages/lovemap/LoveMap';
 import MemoryLane from './pages/memory/MemoryLane';
 import CoupleMap from './pages/map/CoupleMap';
-import { useState, useEffect } from 'react';
+import React from 'react';
 
 const queryClient = new QueryClient();
 
