@@ -1,9 +1,11 @@
 import axios from 'axios';
 
 const getBaseURL = () => {
-    if (import.meta.env.PROD) return '/api';
-
     const envURL = import.meta.env.VITE_API_URL;
+
+    if (import.meta.env.PROD) {
+        return envURL || '/api';
+    }
 
     // Nếu đang truy cập qua IP (không phải localhost) thì ưu tiên dùng IP đó để gọi API
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
