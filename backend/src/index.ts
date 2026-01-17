@@ -48,37 +48,6 @@ io.on('connection', (socket) => {
         users.set(userId, socket.id);
     });
 
-    // Signaling for WebRTC
-    socket.on('call-user', ({ to, offer, fromName, fromAvatar }) => {
-        const targetSocketId = users.get(to);
-        if (targetSocketId) {
-            io.to(targetSocketId).emit('incoming-call', { from: socket.id, offer, fromName, fromAvatar });
-        } else {
-            socket.emit('call-error', { message: 'Đối phương hiện không online hoặc chưa mở ứng dụng.' });
-        }
-    });
-
-    socket.on('answer-call', ({ to, answer }) => {
-        io.to(to).emit('call-accepted', { answer });
-    });
-
-    socket.on('ice-candidate', ({ to, candidate }) => {
-        io.to(to).emit('ice-candidate', { candidate });
-    });
-
-    socket.on('end-call', ({ to }) => {
-        const targetSocketId = users.get(to) || to;
-        io.to(targetSocketId).emit('call-ended');
-    });
-
-    // Security Notifications
-    socket.on('security-alert', ({ to, type, fromName }) => {
-        const targetSocketId = users.get(to);
-        if (targetSocketId) {
-            io.to(targetSocketId).emit('security-notification', { type, fromName });
-        }
-    });
-
     socket.on('disconnect', () => {
         for (const [userId, socketId] of users.entries()) {
             if (socketId === socket.id) {

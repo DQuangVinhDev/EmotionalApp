@@ -8,8 +8,4 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  define: {
-    // Thêm shim cho các thư viện cũ
-    'global': 'window',
-  }
 })

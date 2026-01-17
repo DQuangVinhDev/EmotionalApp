@@ -211,7 +211,7 @@ function FeedItem({ item, idx }: { item: any; idx: number }) {
                     <div className="flex-1">
                         <h3 className="font-black text-white text-sm">{item.userId?.name || item.fromUserId?.name || item.initiatorUserId?.name || 'Partner'}</h3>
                         <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mt-0.5 inline-flex items-center gap-2">
-                            <span className="w-1 h-1 bg-slate-700 rounded-full" /> {item.itemType} • {new Date(item.sharedAt || item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'numeric' })}
+                            <span className="w-1 h-1 bg-slate-700 rounded-full" /> {item.itemType} {new Date(item.sharedAt || item.createdAt).toLocaleDateString('vi-VN', { day: 'numeric', month: 'numeric' })}
                         </p>
                     </div>
                 </div>

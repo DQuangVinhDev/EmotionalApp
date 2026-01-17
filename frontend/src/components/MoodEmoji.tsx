@@ -37,7 +37,7 @@ const MOOD_ASSETS: Record<number, { url: string; color: string; anim: any }> = {
         }
     },
     4: { // Tốt - Happy
-        url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f642/512.webp',
+        url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f604/512.webp',
         color: 'rgba(16, 185, 129, 0.4)', // Emerald
         anim: {
             animate: {

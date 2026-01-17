@@ -15,6 +15,18 @@ router.get('/current', authMiddleware, async (req: AuthRequest, res) => {
     }
 });
 
+router.get('/history', authMiddleware, async (req: AuthRequest, res) => {
+    try {
+        const coupleId = req.user?.coupleId;
+        const sessions = await WeeklySession.find({ coupleId })
+            .sort({ createdAt: -1 })
+            .limit(10);
+        res.json(sessions);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 router.post('/submit', authMiddleware, async (req: AuthRequest, res) => {
     try {
         const userId = req.user?.userId;

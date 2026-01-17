@@ -227,8 +227,8 @@ export default function CoupleMap() {
             <div className="flex-1 rounded-[3.5rem] overflow-hidden border-4 border-white/5 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] relative">
                 <MapContainer center={viewCoords} zoom={13} style={{ height: '100%', width: '100%', zIndex: 10 }}>
                     <TileLayer
-                        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     />
                     <MapEvents />
                     <MapAutoCenter locations={locations || []} />

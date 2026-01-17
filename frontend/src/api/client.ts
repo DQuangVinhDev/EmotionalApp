@@ -1,7 +1,20 @@
 import axios from 'axios';
 
+const getBaseURL = () => {
+    if (import.meta.env.PROD) return '/api';
+
+    const envURL = import.meta.env.VITE_API_URL;
+
+    // Nếu đang truy cập qua IP (không phải localhost) thì ưu tiên dùng IP đó để gọi API
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        return `http://${window.location.hostname}:5000`;
+    }
+
+    return envURL || 'http://localhost:5000';
+};
+
 const client = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000'),
+    baseURL: getBaseURL(),
 });
 
 client.interceptors.request.use((config) => {
