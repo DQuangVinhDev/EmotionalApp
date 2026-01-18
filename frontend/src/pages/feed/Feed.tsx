@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import client from '../../api/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Star, ShieldAlert, MessageCircle, RefreshCcw, Quote, Sparkles, Send, Filter, X } from 'lucide-react';
@@ -12,10 +12,19 @@ export default function Feed() {
     const [endDate, setEndDate] = useState('');
     const [showFilters, setShowFilters] = useState(false);
 
-    const { data: feed, isLoading, refetch } = useQuery({
+    const {
+        data: feedData,
+        isLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        refetch
+    } = useInfiniteQuery({
         queryKey: ['feed', filterType, startDate, endDate],
-        queryFn: async () => {
+        queryFn: async ({ pageParam = 1 }) => {
             const params = new URLSearchParams();
+            params.append('page', pageParam.toString());
+            params.append('limit', '10');
             if (filterType) params.append('type', filterType);
             if (startDate) params.append('startDate', startDate);
             if (endDate) params.append('endDate', endDate);
@@ -23,8 +32,13 @@ export default function Feed() {
             const res = await client.get(`/feed?${params.toString()}`);
             return res.data;
         },
-        refetchInterval: showFilters ? undefined : 15000, // Sync slower when filtering
+        getNextPageParam: (lastPage, allPages) => {
+            return lastPage.hasMore ? allPages.length + 1 : undefined;
+        },
+        initialPageParam: 1,
     });
+
+    const feed = feedData?.pages.flatMap(page => page.data) || [];
 
     const resetFilters = () => {
         setFilterType('');
@@ -132,22 +146,44 @@ export default function Feed() {
                         <p className="text-gray-300 font-bold uppercase text-[10px] tracking-widest animate-pulse">Đang đồng bộ dữ liệu...</p>
                     </div>
                 ) : (
-                    <AnimatePresence mode="popLayout">
-                        {feed?.length > 0 ? feed.map((item: any, idx: number) => (
-                            <FeedItem key={item._id} item={item} idx={idx} />
-                        )) : (
-                            <div className="text-center py-20 bg-slate-900/30 rounded-[3rem] border border-dashed border-white/10">
-                                <p className="text-slate-500 font-medium italic text-sm">
-                                    {hasActiveFilters ? 'Không thấy bài viết nào phù hợp 🔍' : 'Chưa có gì được chia sẻ hôm nay ✨'}
-                                </p>
-                                {hasActiveFilters && (
-                                    <button onClick={resetFilters} className="btn btn-link text-rose-500 normal-case no-underline font-black mt-2">
-                                        Xem lại tất cả
-                                    </button>
-                                )}
+                    <>
+                        <AnimatePresence mode="popLayout">
+                            {feed.length > 0 ? feed.map((item: any, idx: number) => (
+                                <FeedItem key={item._id} item={item} idx={idx} />
+                            )) : (
+                                <div className="text-center py-20 bg-slate-900/30 rounded-[3rem] border border-dashed border-white/10">
+                                    <p className="text-slate-500 font-medium italic text-sm">
+                                        {hasActiveFilters ? 'Không thấy bài viết nào phù hợp 🔍' : 'Chưa có gì được chia sẻ hôm nay ✨'}
+                                    </p>
+                                    {hasActiveFilters && (
+                                        <button onClick={resetFilters} className="btn btn-link text-rose-500 normal-case no-underline font-black mt-2">
+                                            Xem lại tất cả
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </AnimatePresence>
+
+                        {hasNextPage && (
+                            <div className="flex justify-center pt-4">
+                                <motion.button
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => fetchNextPage()}
+                                    disabled={isFetchingNextPage}
+                                    className="px-8 py-4 bg-slate-900/50 hover:bg-slate-800 text-rose-500 rounded-full font-black text-xs uppercase tracking-widest border border-white/5 transition-all flex items-center gap-3"
+                                >
+                                    {isFetchingNextPage ? (
+                                        <>
+                                            <span className="loading loading-spinner loading-xs"></span>
+                                            Đang tải...
+                                        </>
+                                    ) : (
+                                        'Xem thêm bài viết'
+                                    )}
+                                </motion.button>
                             </div>
                         )}
-                    </AnimatePresence>
+                    </>
                 )}
             </div>
         </div>

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import webpush from 'web-push';
 import User from '../models/User';
 import Couple from '../models/Couple';
+import { NotificationService, NotificationType } from './NotificationService';
 
 dotenv.config();
 
@@ -111,7 +112,7 @@ export const sendNotificationEmail = async (toUserId: string, subject: string, m
     }
 };
 
-export const notifyPartner = async (fromUserId: string, coupleId: string, subject: string, text: string) => {
+export const notifyPartner = async (fromUserId: string, coupleId: string, subject: string, text: string, type: NotificationType = 'system', link?: string) => {
     try {
         const couple = await Couple.findById(coupleId);
         if (!couple) return;
@@ -119,7 +120,18 @@ export const notifyPartner = async (fromUserId: string, coupleId: string, subjec
         const partnerId = couple.memberIds.find(id => id.toString() !== fromUserId.toString());
         if (!partnerId) return;
 
+        // Send Email & Push
         await sendNotificationEmail(partnerId.toString(), subject, text);
+
+        // Create In-App Notification Record
+        await NotificationService.createNotification({
+            recipientId: partnerId.toString(),
+            senderId: fromUserId,
+            type,
+            title: subject,
+            content: text,
+            link
+        });
     } catch (error) {
         console.error('Error notifying partner:', error);
     }

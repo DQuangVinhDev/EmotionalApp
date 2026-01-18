@@ -26,7 +26,9 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
                     String(fromUserId),
                     String(coupleId),
                     `${user.name} vừa gửi cho bạn một lời khen ngợi! 🌟`,
-                    `${user.name} vừa cho thêm một "hạt mầm" vào Jar of Wins: "${req.body.text}"`
+                    `${user.name} vừa cho thêm một "hạt mầm" vào Jar of Wins: "${req.body.text}"`,
+                    'kudos',
+                    '/feed'
                 );
             }
         }

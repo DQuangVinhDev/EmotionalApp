@@ -18,6 +18,8 @@ import { seedPrompts } from './services/seed';
 import memoryRoutes from './routes/memory';
 import commentRoutes from './routes/comment';
 import locationRoutes from './routes/location';
+import spaceRequestRoutes from './routes/spaceRequest';
+import notificationRoutes from './routes/notifications';
 
 import { createServer } from 'http';
 import { Server } from 'socket.io';
@@ -72,6 +74,8 @@ app.use('/users', userRoutes);
 app.use('/memory', memoryRoutes);
 app.use('/comments', commentRoutes);
 app.use('/locations', locationRoutes);
+app.use('/space-requests', spaceRequestRoutes);
+app.use('/notifications', notificationRoutes);
 
 // Basic health check
 app.get('/ping', (req: any, res: any) => res.send('pong'));

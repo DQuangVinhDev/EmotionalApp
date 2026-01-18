@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History } from 'lucide-react';
+import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History, Moon, Bell } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
+import { useNotificationStore } from '../store/useNotificationStore';
 import { useQuery } from '@tanstack/react-query';
 import client from '../api/client';
 import { useState, useEffect } from 'react';
@@ -59,10 +60,12 @@ const LOVE_TIPS = [
 export default function Home() {
     const navigate = useNavigate();
     const { user } = useAuthStore();
+    const { unreadCount, fetchNotifications } = useNotificationStore();
     const [tip, setTip] = useState(LOVE_TIPS[0]);
 
     useEffect(() => {
         setTip(LOVE_TIPS[Math.floor(Math.random() * LOVE_TIPS.length)]);
+        fetchNotifications();
     }, []);
 
     const { data: stats } = useQuery({
@@ -77,9 +80,24 @@ export default function Home() {
         <div className="p-8 space-y-10 pb-32">
             {/* Header Section */}
             <div className="pt-10 space-y-2">
-                <div className="flex items-center gap-3 mb-1">
-                    <div className="w-8 h-1 bg-rose-500 rounded-full" />
-                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Dashboard</span>
+                <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-1 bg-rose-500 rounded-full" />
+                        <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Dashboard</span>
+                    </div>
+
+                    <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => navigate('/notifications')}
+                        className="relative p-2 text-slate-400 hover:text-rose-500 transition-colors"
+                    >
+                        <Bell size={24} />
+                        {unreadCount > 0 && (
+                            <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-rose-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-slate-50">
+                                {unreadCount > 9 ? '9+' : unreadCount}
+                            </span>
+                        )}
+                    </motion.button>
                 </div>
                 <div className="flex justify-between items-end">
                     <div>
@@ -154,6 +172,13 @@ export default function Home() {
                         icon={<Calendar size={24} />}
                         color="bg-violet-500"
                         onClick={() => navigate('/ritual')}
+                    />
+                    <MainFeature
+                        title="Alone Ticket"
+                        desc="Yêu cầu khoảng lặng cho bản thân"
+                        icon={<Moon size={24} />}
+                        color="bg-slate-700"
+                        onClick={() => navigate('/space')}
                     />
                     <MainFeature
                         title="Memory Lane"

@@ -29,7 +29,9 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
                     String(userId),
                     String(coupleId),
                     `${user.name} vừa chia sẻ tâm trạng mới`,
-                    `${user.name} vừa cập nhật trạng thái cảm xúc của họ. Hãy vào xem và tiếp thêm năng lượng nhé! ❤️`
+                    `${user.name} vừa cập nhật trạng thái cảm xúc của họ. Hãy vào xem và tiếp thêm năng lượng nhé! ❤️`,
+                    'checkin',
+                    '/feed'
                 );
             }
         }
@@ -65,7 +67,9 @@ router.post('/:id/shareNow', authMiddleware, async (req: AuthRequest, res: Respo
                 String(user._id),
                 String(checkin.coupleId),
                 `${user.name} vừa chia sẻ tâm trạng mới`,
-                `${user.name} vừa chuyển trạng thái check-in sang công khai. Hãy vào xem nhé! ❤️`
+                `${user.name} vừa chuyển trạng thái check-in sang công khai. Hãy vào xem nhé! ❤️`,
+                'checkin',
+                '/feed'
             );
         }
 

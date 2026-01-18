@@ -26,7 +26,9 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
                     String(userId),
                     String(coupleId),
                     `${user.name} muốn kết nối để giải quyết mâu thuẫn`,
-                    `${user.name} đã gửi một thông điệp hòa giải qua Repair Loop. Hãy vào lắng nghe và thấu hiểu nhé. ❤️`
+                    `${user.name} đã gửi một thông điệp hòa giải qua Repair Loop. Hãy vào lắng nghe và thấu hiểu nhé. ❤️`,
+                    'repair',
+                    '/repair'
                 );
             }
         }
@@ -50,7 +52,9 @@ router.post('/:id/respond', authMiddleware, async (req: AuthRequest, res: Respon
                 String(user._id),
                 String(repair.coupleId),
                 `${user.name} đã phản hồi thông điệp của bạn`,
-                `${user.name} vừa gửi phản hồi trong Repair Loop. Hãy cùng nhau tìm tiếng nói chung nhé! ✨`
+                `${user.name} vừa gửi phản hồi trong Repair Loop. Hãy cùng nhau tìm tiếng nói chung nhé! ✨`,
+                'repair',
+                '/repair'
             );
         }
 

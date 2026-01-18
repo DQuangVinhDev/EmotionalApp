@@ -18,6 +18,8 @@ import Settings from './pages/settings/Settings';
 import LoveMap from './pages/lovemap/LoveMap';
 import MemoryLane from './pages/memory/MemoryLane';
 import CoupleMap from './pages/map/CoupleMap';
+import SpacePage from './pages/space/SpacePage';
+import Notifications from './pages/notifications/Notifications';
 import React from 'react';
 
 const queryClient = new QueryClient();
@@ -50,6 +52,8 @@ export default function App() {
                         <Route path="/lovemap" element={<ProtectedRoute><LoveMap /></ProtectedRoute>} />
                         <Route path="/memory-lane" element={<ProtectedRoute><MemoryLane /></ProtectedRoute>} />
                         <Route path="/map" element={<ProtectedRoute><CoupleMap /></ProtectedRoute>} />
+                        <Route path="/space" element={<ProtectedRoute><SpacePage /></ProtectedRoute>} />
+                        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
                     </Route>
                 </Routes>
             </BrowserRouter>
