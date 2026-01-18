@@ -43,12 +43,35 @@ export default function Login() {
                 transition={{ duration: 0.5 }}
                 className="relative z-10 space-y-10"
             >
-                <div className="text-center space-y-2">
-                    <div className="inline-flex p-4 bg-rose-50 rounded-3xl text-rose-500 mb-4 shadow-inner">
-                        <LogIn size={32} />
-                    </div>
-                    <h1 className="text-4xl font-black text-gray-900 tracking-tight">Đăng nhập</h1>
-                    <p className="text-gray-400 font-medium italic">Tiếp tục hành trình yêu thương</p>
+                <div className="text-center space-y-4">
+                    <motion.div
+                        animate={{
+                            y: [0, -10, 0],
+                        }}
+                        transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                        }}
+                        className="inline-flex p-1 bg-rose-50 rounded-[2rem] mb-2 shadow-xl shadow-rose-100"
+                    >
+                        <motion.span
+                            animate={{
+                                scale: [1, 1.25, 1],
+                                filter: ["drop-shadow(0 0 0px rgba(244,63,94,0))", "drop-shadow(0 0 20px rgba(244,63,94,0.5))", "drop-shadow(0 0 0px rgba(244,63,94,0))"]
+                            }}
+                            transition={{
+                                duration: 1,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                            className="text-7xl p-6"
+                        >
+                            ❤️
+                        </motion.span>
+                    </motion.div>
+                    <h1 className="text-4xl font-black text-gray-900 tracking-tight">Chào bạn yêu!</h1>
+                    <p className="text-gray-400 font-medium italic">Tiếp tục hành trình yêu thương của chúng mình</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-4">

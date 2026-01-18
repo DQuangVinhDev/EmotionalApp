@@ -82,8 +82,36 @@ export default function Home() {
             <div className="pt-10 space-y-2">
                 <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-1 bg-rose-500 rounded-full" />
-                        <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Dashboard</span>
+                        <motion.div
+                            animate={{
+                                scale: [1, 1.1, 1],
+                                rotate: [0, 5, -5, 0]
+                            }}
+                            transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                            className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden shadow-lg"
+                        >
+                            <motion.span
+                                animate={{
+                                    scale: [1, 1.2, 1],
+                                }}
+                                transition={{
+                                    duration: 0.8,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                                className="text-3xl"
+                            >
+                                ❤️
+                            </motion.span>
+                        </motion.div>
+                        <div className="flex flex-col">
+                            <div className="w-8 h-1 bg-rose-500 rounded-full mb-1" />
+                            <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em]">Dashboard</span>
+                        </div>
                     </div>
 
                     <motion.button
