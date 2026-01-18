@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import client from '../../api/client';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { LogIn, Mail, Lock } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 
 export default function Login() {
     const [email, setEmail] = useState('');
