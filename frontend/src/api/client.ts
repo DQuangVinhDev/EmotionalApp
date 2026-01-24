@@ -27,4 +27,28 @@ client.interceptors.request.use((config) => {
     return config;
 });
 
+// Response interceptor to handle Token Expiration (401)
+client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            // Token expired or invalid
+            const isLoginPage = window.location.pathname.includes('/auth');
+
+            if (!isLoginPage) {
+                // Clear all local auth data
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('user');
+
+                // Notify user and redirect
+                // Note: We use window.location.href to force a clean state reload to the login page
+                alert('Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại. 🔐');
+                window.location.href = '/auth/login';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default client;

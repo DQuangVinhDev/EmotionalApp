@@ -77,12 +77,17 @@ router.post('/push-subscribe', authMiddleware, async (req: AuthRequest, res) => 
         // Initialize if empty
         if (!user.pushSubscriptions) user.pushSubscriptions = [];
 
-        // Add if not already exists (check by endpoint)
-        const exists = user.pushSubscriptions.some(s => s.endpoint === subscription.endpoint);
-        if (!exists) {
+        // Update if exists (by endpoint), otherwise add new
+        const index = user.pushSubscriptions.findIndex(s => s.endpoint === subscription.endpoint);
+        if (index > -1) {
+            user.pushSubscriptions[index] = subscription;
+          
+        } else {
             user.pushSubscriptions.push(subscription);
-            await user.save();
+         
         }
+
+        await user.save();
 
         res.status(201).json({ message: 'Đã đăng ký thông báo đẩy thành công! 🔔' });
     } catch (error: any) {

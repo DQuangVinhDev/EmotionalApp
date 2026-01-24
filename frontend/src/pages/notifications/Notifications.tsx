@@ -99,12 +99,6 @@ export default function Notifications() {
                                             <p className={`text-xs font-medium line-clamp-2 leading-relaxed ${notif.isRead ? 'text-slate-500' : 'text-slate-300'}`}>
                                                 {notif.content}
                                             </p>
-                                            <div className="flex items-center gap-2 mt-3 text-slate-500">
-                                                <div className="w-1 h-1 rounded-full bg-rose-500" />
-                                                <span className="text-[9px] font-black uppercase tracking-widest">
-                                                    {DateTime.fromISO(notif.createdAt).toRelative({ locale: 'vi' })}
-                                                </span>
-                                            </div>
                                         </div>
                                     </div>
 

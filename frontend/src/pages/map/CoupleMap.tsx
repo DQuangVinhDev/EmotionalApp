@@ -57,6 +57,7 @@ export default function CoupleMap() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [imageUrl, setImageUrl] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
     const [viewCoords, setViewCoords] = useState<[number, number]>([10.762622, 106.660172]); // Default HCMC
     const queryClient = useQueryClient();
 
@@ -119,10 +120,16 @@ export default function CoupleMap() {
     }, [isAdding]);
 
     const handleUpload = () => {
+        if (isUploading) return;
         if (!window.cloudinary) {
             toast.error('Cloudinary widget not loaded');
             return;
         }
+
+        setIsUploading(true);
+        toast.info('Đang mở thư viện ảnh, vui lòng đợi giây lát... ⏳', {
+            id: 'map-upload-loading'
+        });
 
         const widget = window.cloudinary.createUploadWidget(
             {
@@ -155,9 +162,15 @@ export default function CoupleMap() {
                 }
             },
             (error: any, result: any) => {
+                if (result.event === 'close') {
+                    setIsUploading(false);
+                    toast.dismiss('map-upload-loading');
+                }
                 if (!error && result && result.event === 'success') {
                     setImageUrl(result.info.secure_url);
                     toast.success('Ảnh đã sẵn sàng! 📸');
+                    setIsUploading(false);
+                    toast.dismiss('map-upload-loading');
                 }
             }
         );
@@ -320,10 +333,20 @@ export default function CoupleMap() {
                                 <div className="flex gap-4">
                                     <button
                                         onClick={handleUpload}
-                                        className={`flex-1 flex items-center justify-center gap-3 p-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all ${imageUrl ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'}`}
+                                        disabled={isUploading}
+                                        className={`flex-1 flex items-center justify-center gap-3 p-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all ${isUploading ? 'bg-slate-800 text-slate-500 opacity-50 cursor-not-allowed' : imageUrl ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'}`}
                                     >
-                                        <Camera size={18} />
-                                        {imageUrl ? 'Ảnh đã xong ✨' : 'Thêm ảnh'}
+                                        {isUploading ? (
+                                            <>
+                                                <span className="loading loading-spinner loading-xs"></span>
+                                                Đang chuẩn bị...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Camera size={18} />
+                                                {imageUrl ? 'Ảnh đã xong ✨' : 'Thêm ảnh'}
+                                            </>
+                                        )}
                                     </button>
 
                                     <button

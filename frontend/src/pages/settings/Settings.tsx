@@ -144,6 +144,7 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
         pushNotifications: profile?.settings?.pushNotifications !== false
     });
     const [isCurrentDeviceSubscribed, setIsCurrentDeviceSubscribed] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     useEffect(() => {
         const checkSubscription = async () => {
@@ -328,6 +329,12 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                                     <button
                                         type="button"
                                         onClick={() => {
+                                            if (isUploading) return;
+                                            setIsUploading(true);
+                                            toast.info('Đang mở thư viện ảnh, vui lòng đợi giây lát... ⏳', {
+                                                id: 'upload-loading'
+                                            });
+
                                             const widget = window.cloudinary.createUploadWidget(
                                                 {
                                                     cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
@@ -364,17 +371,29 @@ function SettingsModal({ type, profile, onClose, onUpdate, isPending }: any) {
                                                     }
                                                 },
                                                 (error: any, result: any) => {
+                                                    if (result.event === 'close') {
+                                                        setIsUploading(false);
+                                                        toast.dismiss('upload-loading');
+                                                    }
                                                     if (!error && result && result.event === 'success') {
                                                         setFormData({ ...formData, avatarUrl: result.info.secure_url });
                                                         toast.success('Ảnh đại diện đã sẵn sàng! ✨');
+                                                        setIsUploading(false);
+                                                        toast.dismiss('upload-loading');
                                                     }
                                                 }
                                             );
                                             widget.open();
                                         }}
-                                        className="flex-1 bg-white/5 text-rose-500 hover:bg-rose-500/10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-white/10"
+                                        disabled={isUploading}
+                                        className={`flex-1 bg-white/5 text-rose-500 hover:bg-rose-500/10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border border-white/10 ${isUploading ? 'opacity-50 cursor-not-allowed text-slate-500' : ''}`}
                                     >
-                                        {formData.avatarUrl ? 'Thay đổi ảnh' : 'Chọn ảnh đại diện'}
+                                        {isUploading ? (
+                                            <span className="flex items-center justify-center gap-2 italic">
+                                                <span className="loading loading-spinner loading-xs"></span>
+                                                Đang chuẩn bị...
+                                            </span>
+                                        ) : (formData.avatarUrl ? 'Thay đổi ảnh' : 'Chọn ảnh đại diện')}
                                     </button>
                                 </div>
                             </div>

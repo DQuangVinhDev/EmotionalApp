@@ -78,23 +78,23 @@ export const sendNotificationEmail = async (toUserId: string, subject: string, m
             const pushPayload = JSON.stringify({
                 title: `[Couple App] ${subject}`,
                 body: message,
-                icon: 'https://emotional-frontend-mcyr.onrender.com/logo192.png',
+                icon: 'https://emotional-frontend-mcyr.onrender.com/vite.svg',
                 data: {
                     url: appUrl
                 }
             });
 
-            const updatedSubscriptions = [...user.pushSubscriptions];
-            let changed = false;
+            const failedEndpoints: string[] = [];
 
-            const pushPromises = user.pushSubscriptions.map(async (sub, index) => {
+            
+
+            const pushPromises = user.pushSubscriptions.map(async (sub) => {
                 try {
                     await webpush.sendNotification(sub, pushPayload);
                 } catch (error: any) {
                     if (error.statusCode === 410 || error.statusCode === 404) {
                         // Gone or Not Found - subscription is no longer valid
-                        updatedSubscriptions.splice(index, 1);
-                        changed = true;
+                        failedEndpoints.push(sub.endpoint);
                     }
                     console.error('Push error:', error.message);
                 }
@@ -102,9 +102,10 @@ export const sendNotificationEmail = async (toUserId: string, subject: string, m
 
             await Promise.all(pushPromises);
 
-            if (changed) {
-                user.pushSubscriptions = updatedSubscriptions;
+            if (failedEndpoints.length > 0) {
+                user.pushSubscriptions = user.pushSubscriptions.filter(s => !failedEndpoints.includes(s.endpoint));
                 await user.save();
+                console.log(`Removed ${failedEndpoints.length} invalid subscriptions for user ${user._id}`);
             }
         }
     } catch (error) {

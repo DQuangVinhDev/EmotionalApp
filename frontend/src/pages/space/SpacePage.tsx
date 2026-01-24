@@ -271,6 +271,9 @@ function RequestCard({ req, currentUserId, onRespond, onCancel }: {
     const statusInfo = getStatusInfo();
     const isActive = req.status === 'accepted' && now >= start && now <= end;
 
+    const [isRejecting, setIsRejecting] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState('');
+
     return (
         <motion.div
             layout
@@ -338,29 +341,59 @@ function RequestCard({ req, currentUserId, onRespond, onCancel }: {
                 )}
 
                 {/* Actions */}
-                <AnimatePresence>
+                <AnimatePresence mode="wait">
                     {!isRequester && req.status === 'pending' && (
-                        <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            className="flex gap-3 pt-2"
-                        >
-                            <button
-                                onClick={() => {
-                                    const r = window.prompt('Lý do từ chối?');
-                                    if (r !== null) onRespond(req._id, 'rejected', r);
-                                }}
-                                className="flex-1 h-12 rounded-2xl bg-white/5 border border-white/10 text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                        isRejecting ? (
+                            <motion.div
+                                key="reject-form"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="space-y-3 pt-2"
                             >
-                                Từ chối
-                            </button>
-                            <button
-                                onClick={() => onRespond(req._id, 'accepted')}
-                                className="flex-1 h-12 rounded-2xl bg-rose-500 text-white text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-rose-500/20 transition-all"
+                                <textarea
+                                    autoFocus
+                                    placeholder="Tại sao bạn muốn từ chối? (Hãy giải thích nhẹ nhàng...)"
+                                    className="textarea w-full h-24 bg-white/5 border-none ring-1 ring-white/10 rounded-2xl p-4 font-medium text-xs text-white placeholder:text-slate-600 focus:ring-2 focus:ring-rose-500/50"
+                                    value={rejectionReason}
+                                    onChange={(e) => setRejectionReason(e.target.value)}
+                                />
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setIsRejecting(false)}
+                                        className="flex-1 h-10 rounded-xl bg-white/5 text-slate-400 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                                    >
+                                        Hủy
+                                    </button>
+                                    <button
+                                        onClick={() => onRespond(req._id, 'rejected', rejectionReason)}
+                                        className="flex-1 h-10 rounded-xl bg-rose-500 text-white text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-rose-500/20 transition-all"
+                                    >
+                                        Xác nhận từ chối
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="pending-actions"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex gap-3 pt-2"
                             >
-                                Chấp nhận
-                            </button>
-                        </motion.div>
+                                <button
+                                    onClick={() => setIsRejecting(true)}
+                                    className="flex-1 h-12 rounded-2xl bg-white/5 border border-white/10 text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                                >
+                                    Từ chối
+                                </button>
+                                <button
+                                    onClick={() => onRespond(req._id, 'accepted')}
+                                    className="flex-1 h-12 rounded-2xl bg-rose-500 text-white text-[10px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-rose-500/20 transition-all"
+                                >
+                                    Chấp nhận
+                                </button>
+                            </motion.div>
+                        )
                     )}
 
                     {isRequester && req.status === 'pending' && (
