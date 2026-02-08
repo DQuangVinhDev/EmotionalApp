@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, Suspense, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Text, Environment, useCursor, useTexture, RoundedBox } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Text, Environment, useCursor, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -28,33 +28,16 @@ interface SessionData {
     currentCardId: CardData | null;
 }
 
-// --- Shared Materials (Performance Optimization - No Shaders = No Flicker) ---
-const cardBackMaterial = new THREE.MeshStandardMaterial({
-    color: new THREE.Color('#e11d48'),
-    roughness: 0.25,
-    metalness: 0.15,
-    side: THREE.DoubleSide
-});
-
-const cardFrontMaterial = new THREE.MeshStandardMaterial({
-    color: new THREE.Color('#ffffff'),
-    roughness: 0.1,
-    metalness: 0.1,
-    side: THREE.DoubleSide
-});
-
 // --- 3D Components ---
 
 function Card({
     data,
     isDrawn,
-    onDraw,
-    hoverScale = 1.05
+    onDraw
 }: {
     data: CardData | null,
     isDrawn: boolean,
-    onDraw: () => void,
-    hoverScale?: number
+    onDraw: () => void
 }) {
     const meshRef = useRef<THREE.Group>(null);
     const [hovered, setHovered] = useState(false);
@@ -334,80 +317,6 @@ function Card({
     );
 }
 
-// Optimized Avatar with cached texture loading
-function AvatarBubble({ url, position, label, jump }: { url: string; position: [number, number, number]; label: string; jump?: boolean }) {
-    const groupRef = useRef<THREE.Group>(null);
-    const animRef = useRef({ baseY: position[1], phase: Math.random() * Math.PI * 2 });
-
-    // Use useTexture for proper caching and loading
-    const texture = useTexture(url || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdBWB76EZKUgHdARYa-XNyIzoiJiUiyKiFrg&s');
-
-    // Optimized animation - reduced frequency
-    useFrame((state) => {
-        if (groupRef.current) {
-            const time = state.clock.elapsedTime;
-            groupRef.current.position.y = animRef.current.baseY + Math.sin(time * 0.6 + animRef.current.phase) * 0.08;
-            groupRef.current.rotation.y = Math.sin(time * 0.3) * 0.08;
-        }
-    });
-
-    useEffect(() => {
-        if (jump && groupRef.current) {
-            gsap.to(groupRef.current.position, {
-                y: animRef.current.baseY + 0.8,
-                duration: 0.25,
-                yoyo: true,
-                repeat: 1,
-                ease: "power2.out"
-            });
-            gsap.to(groupRef.current.scale, {
-                x: 1.2, y: 1.2, z: 1.2,
-                duration: 0.15,
-                yoyo: true,
-                repeat: 1
-            });
-        }
-    }, [jump]);
-
-    return (
-        <group ref={groupRef} position={position}>
-            {/* Glow Ring */}
-            <mesh position={[0, 0, -0.02]}>
-                <ringGeometry args={[0.55, 0.72, 32]} />
-                <meshBasicMaterial color="#ff6b8a" transparent opacity={0.4} />
-            </mesh>
-
-            {/* Avatar Circle */}
-            <mesh>
-                <circleGeometry args={[0.55, 48]} />
-                <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
-            </mesh>
-
-            {/* Border Ring */}
-            <mesh position={[0, 0, -0.01]}>
-                <ringGeometry args={[0.55, 0.62, 48]} />
-                <meshStandardMaterial color="#f43f5e" emissive="#f43f5e" emissiveIntensity={0.3} />
-            </mesh>
-
-            {/* Label Background */}
-            <mesh position={[0, -0.85, 0]}>
-                <planeGeometry args={[0.8, 0.22]} />
-                <meshBasicMaterial color="#1e1e2e" transparent opacity={0.8} />
-            </mesh>
-
-            {/* Label */}
-            <Text
-                position={[0, -0.85, 0.01]}
-                fontSize={0.1}
-                color="white"
-                anchorX="center"
-                anchorY="middle"
-            >
-                {label}
-            </Text>
-        </group>
-    );
-}
 
 // Deck pile cards - optimized with instancing concept
 const DeckPile = React.memo(function DeckPile() {
