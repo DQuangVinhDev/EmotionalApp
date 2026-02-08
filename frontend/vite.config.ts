@@ -8,4 +8,12 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    fs: {
+      allow: ['..']
+    }
+  },
+  optimizeDeps: {
+    include: ['zustand', 'three', 'gsap', '@react-three/fiber', '@react-three/drei']
+  }
 })

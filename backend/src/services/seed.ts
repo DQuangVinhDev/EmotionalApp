@@ -1,4 +1,5 @@
 import Prompt, { PromptType } from '../models/Prompt';
+import Card from '../models/Card';
 
 export const seedPrompts = async () => {
     const existingCount = await Prompt.countDocuments();
@@ -115,4 +116,176 @@ export const seedPrompts = async () => {
 
     await Prompt.insertMany(promptDocs);
     console.log(`Seeded ${promptDocs.length} high-quality Love Map prompts.`);
+};
+
+export const seedCards = async () => {
+    const existingCount = await Card.countDocuments();
+    if (existingCount > 20) {
+        console.log('Cards already seeded.');
+        return;
+    }
+
+    console.log('Seeding full Couple Card Deck (v1)...');
+    await Card.deleteMany({});
+
+    const cards = [
+        // ======================
+        // LEVEL 1 – WARMUP
+        // ======================
+        {
+            level: 1,
+            category: "Warmup",
+            prompt: "Hôm nay mức năng lượng của bạn từ 0–10 là bao nhiêu?",
+            followups: [
+                "Điều gì ảnh hưởng nhiều nhất đến con số đó?",
+                "Mình có thể làm gì nhỏ để bạn dễ chịu hơn ngay lúc này?"
+            ],
+            flags: ["safe"]
+        },
+        {
+            level: 1,
+            category: "Warmup",
+            prompt: "Một khoảnh khắc nhỏ gần đây khiến bạn mỉm cười khi nghĩ đến mình là gì?",
+            followups: [
+                "Điều gì làm khoảnh khắc đó trở nên đặc biệt?",
+                "Bạn muốn điều đó lặp lại khi nào?"
+            ],
+            flags: ["safe"]
+        },
+        {
+            level: 1,
+            category: "Self",
+            prompt: "Khi căng thẳng, bạn thường cần điều gì nhất: không gian, lắng nghe hay giải pháp?",
+            followups: [
+                "Dấu hiệu nào cho thấy bạn đang căng thẳng?",
+                "Một điều mình nên tránh làm lúc đó là gì?"
+            ],
+            flags: ["safe"]
+        },
+        {
+            level: 1,
+            category: "Us",
+            prompt: "Một điều nhỏ mình làm khiến bạn cảm thấy được yêu thương là gì?",
+            followups: [
+                "Vì sao điều đó quan trọng với bạn?",
+                "Mình nên làm điều đó với tần suất thế nào?"
+            ],
+            flags: ["safe"]
+        },
+
+        // ======================
+        // LEVEL 2 – DEEPER CONNECTION
+        // ======================
+        {
+            level: 2,
+            category: "Values",
+            prompt: "Với bạn, một mối quan hệ tốt cần có 3 yếu tố nào quan trọng nhất?",
+            followups: [
+                "Yếu tố nào bạn lo sẽ thiếu nhất trong tương lai?",
+                "Mình đang làm tốt và chưa tốt ở điểm nào?"
+            ],
+            flags: ["deep"]
+        },
+        {
+            level: 2,
+            category: "Us",
+            prompt: "Một thói quen nhỏ của mình đôi khi làm bạn khó chịu nhưng bạn thường bỏ qua là gì?",
+            followups: [
+                "Mức độ khó chịu của bạn từ 0–10?",
+                "Nếu mình thay đổi 1% thôi, bạn muốn đó là gì?"
+            ],
+            flags: ["deep", "consent"]
+        },
+        {
+            level: 2,
+            category: "Conflict",
+            prompt: "Khi chúng ta cãi nhau, điều bạn sợ nhất lúc đó là gì?",
+            followups: [
+                "Bạn thường phản ứng thế nào khi có nỗi sợ đó?",
+                "Mình có thể giúp bạn cảm thấy an toàn hơn bằng cách nào?"
+            ],
+            flags: ["deep", "consent"]
+        },
+        {
+            level: 2,
+            category: "Intimacy",
+            prompt: "Bạn cảm thấy gần gũi nhất với mình khi chúng ta làm điều gì cùng nhau?",
+            followups: [
+                "Điều đó cần không gian hoặc thời gian như thế nào?",
+                "Có điều gì gần đây làm bạn khó mở lòng hơn không?"
+            ],
+            flags: ["deep", "consent"]
+        },
+
+        // ======================
+        // LEVEL 3 – VULNERABILITY & REPAIR
+        // ======================
+        {
+            level: 3,
+            category: "Conflict",
+            prompt: "Một câu nói hoặc hành động của mình từng làm bạn tổn thương mà mình có thể không nhận ra là gì?",
+            followups: [
+                "Lúc đó bạn đã diễn giải điều đó như thế nào?",
+                "Lần sau bạn muốn mình phản hồi ra sao?"
+            ],
+            flags: ["deep", "consent", "repair"]
+        },
+        {
+            level: 3,
+            category: "Self",
+            prompt: "Một nỗi sợ sâu bên trong mà bạn hiếm khi chia sẻ với người khác là gì?",
+            followups: [
+                "Điều gì khiến nỗi sợ đó hình thành?",
+                "Mình có thể đồng hành với bạn thế nào khi nó xuất hiện?"
+            ],
+            flags: ["deep", "consent"]
+        },
+        {
+            level: 3,
+            category: "Values",
+            prompt: "Nếu nhìn về 2–3 năm tới, bạn mong mối quan hệ của chúng ta sẽ khác bây giờ ở điểm nào?",
+            followups: [
+                "Điều gì khiến bạn mong muốn sự thay đổi đó?",
+                "Bước nhỏ đầu tiên chúng ta có thể làm là gì?"
+            ],
+            flags: ["deep"]
+        },
+
+        // ======================
+        // ACTION & RITUALS
+        // ======================
+        {
+            level: 1,
+            category: "Action",
+            prompt: "Chọn một nghi thức 10 phút mỗi ngày cho chúng ta (ví dụ: đi bộ, ôm, trò chuyện trước khi ngủ).",
+            followups: [
+                "Khung giờ nào thực tế nhất?",
+                "Điều gì có thể khiến nghi thức này bị gián đoạn?"
+            ],
+            flags: ["action", "safe"]
+        },
+        {
+            level: 2,
+            category: "Action",
+            prompt: "Tuần này, bạn muốn mình thể hiện tình yêu với bạn bằng hành động cụ thể nào?",
+            followups: [
+                "Làm thế nào để mình biết bạn thật sự cảm nhận được?",
+                "Có điều gì mình nên tránh để không phản tác dụng?"
+            ],
+            flags: ["action"]
+        },
+        {
+            level: 3,
+            category: "Action",
+            prompt: "Nếu chúng ta có một 'quy ước khi cãi nhau' gồm 3 điều, bạn muốn 3 điều đó là gì?",
+            followups: [
+                "Một tín hiệu nào có nghĩa là cần tạm dừng?",
+                "Sau khi bình tĩnh, chúng ta quay lại nói chuyện như thế nào?"
+            ],
+            flags: ["action", "repair", "consent"]
+        }
+    ];
+
+    await Card.insertMany(cards);
+    console.log(`Seeded ${cards.length} cards for full Couple Card Deck.`);
 };

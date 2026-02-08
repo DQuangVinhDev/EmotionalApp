@@ -33,7 +33,7 @@ client.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             // Token expired or invalid
-            const isLoginPage = window.location.pathname.includes('/auth');
+            const isLoginPage = window.location.pathname === '/login' || window.location.pathname === '/register';
 
             if (!isLoginPage) {
                 // Clear all local auth data
@@ -44,7 +44,7 @@ client.interceptors.response.use(
                 // Notify user and redirect
                 // Note: We use window.location.href to force a clean state reload to the login page
                 alert('Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại. 🔐');
-                window.location.href = '/auth/login';
+                window.location.href = '/login';
             }
         }
         return Promise.reject(error);

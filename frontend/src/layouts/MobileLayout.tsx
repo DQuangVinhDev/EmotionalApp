@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 
 export default function MobileLayout() {
     const location = useLocation();
-    const hideNav = ['/login', '/register', '/pair', '/lovemap', '/checkin', '/kudos', '/repair'].includes(location.pathname);
+    const hideNav = ['/login', '/register', '/pair', '/lovemap', '/checkin', '/kudos', '/repair', '/deck'].includes(location.pathname);
 
     return (
         <div className="mobile-view flex flex-col relative min-h-screen">
-            <main className="flex-1 overflow-y-auto pb-32">
+            <main className={`flex-1 overflow-y-auto ${hideNav ? '' : 'pb-32'}`}>
                 <Outlet />
             </main>
 

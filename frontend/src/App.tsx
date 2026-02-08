@@ -20,6 +20,7 @@ import MemoryLane from './pages/memory/MemoryLane';
 import CoupleMap from './pages/map/CoupleMap';
 import SpacePage from './pages/space/SpacePage';
 import Notifications from './pages/notifications/Notifications';
+import CoupleCardDeck from './pages/deck/CoupleCardDeck';
 import React from 'react';
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ export default function App() {
                         <Route path="/map" element={<ProtectedRoute><CoupleMap /></ProtectedRoute>} />
                         <Route path="/space" element={<ProtectedRoute><SpacePage /></ProtectedRoute>} />
                         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+                        <Route path="/deck" element={<ProtectedRoute><CoupleCardDeck /></ProtectedRoute>} />
                     </Route>
                 </Routes>
             </BrowserRouter>

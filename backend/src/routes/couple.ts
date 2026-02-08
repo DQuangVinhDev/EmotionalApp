@@ -105,7 +105,7 @@ router.post('/join', authMiddleware, async (req: AuthRequest, res) => {
 router.get('/me', authMiddleware, async (req: AuthRequest, res) => {
     try {
         const userId = req.user?.userId;
-        const couple = await Couple.findOne({ memberIds: userId }).populate('memberIds', 'name email');
+        const couple = await Couple.findOne({ memberIds: userId }).populate('memberIds', 'name email avatarUrl');
 
         if (couple) {
             const accessToken = jwt.sign(

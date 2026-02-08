@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History, Moon, Bell } from 'lucide-react';
+import { CheckCircle, Star, Heart, ShieldAlert, Calendar, Flame, ArrowRight, History, Moon, Bell, LayoutGrid as CardIcon } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNotificationStore } from '../store/useNotificationStore';
 import { useQuery } from '@tanstack/react-query';
@@ -214,6 +214,13 @@ export default function Home() {
                         icon={<History size={24} />}
                         color="bg-rose-400"
                         onClick={() => navigate('/memory-lane')}
+                    />
+                    <MainFeature
+                        title="Couple Card Deck"
+                        desc="Rút thẻ bài & gắn kết 3D"
+                        icon={<CardIcon size={24} />}
+                        color="bg-orange-500"
+                        onClick={() => navigate('/deck')}
                     />
                 </div>
             </div>

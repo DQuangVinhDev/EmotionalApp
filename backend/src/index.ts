@@ -13,13 +13,14 @@ import backlogRoutes from './routes/backlog';
 import feedRoutes from './routes/feed';
 import userRoutes from './routes/user';
 import { startCronJobs } from './services/cron';
-import { seedPrompts } from './services/seed';
+import { seedPrompts, seedCards } from './services/seed';
 
 import memoryRoutes from './routes/memory';
 import commentRoutes from './routes/comment';
 import locationRoutes from './routes/location';
 import spaceRequestRoutes from './routes/spaceRequest';
 import notificationRoutes from './routes/notifications';
+import cardRoutes from './routes/cards';
 
 import { createServer } from 'http';
 import { Server } from 'socket.io';
@@ -48,6 +49,22 @@ io.on('connection', (socket) => {
 
     socket.on('join', (userId) => {
         users.set(userId, socket.id);
+        socket.join(userId); // Join private room
+    });
+
+    socket.on('join_couple', (coupleId) => {
+        console.log(`User ${socket.id} joined couple room: ${coupleId}`);
+        socket.join(coupleId);
+    });
+
+    socket.on('card_drawn', (data) => {
+        // data: { coupleId, card, session }
+        socket.to(data.coupleId).emit('reveal_card', data);
+    });
+
+    socket.on('card_discarded', (data) => {
+        // data: { coupleId }
+        socket.to(data.coupleId).emit('clear_card');
     });
 
     socket.on('disconnect', () => {
@@ -76,6 +93,7 @@ app.use('/comments', commentRoutes);
 app.use('/locations', locationRoutes);
 app.use('/space-requests', spaceRequestRoutes);
 app.use('/notifications', notificationRoutes);
+app.use('/cards', cardRoutes);
 
 // Basic health check
 app.get('/ping', (req: any, res: any) => res.send('pong'));
@@ -87,6 +105,7 @@ const connectDB = async () => {
         await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/coupleapp');
         console.log('Connected to MongoDB');
         await seedPrompts();
+        await seedCards();
     } catch (err: any) {
         console.error('MongoDB connection error:', err);
     }
